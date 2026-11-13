@@ -1,0 +1,45 @@
+name: Build forecast
+
+on:
+  schedule:
+    - cron: "17 */2 * * *"   # every 2 hours (GitHub may run it a few minutes late)
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ["engine/**", "tests/**", ".github/workflows/forecast.yml"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python -m unittest discover -s tests -t .
+      - name: Build forecast
+        run: python -m engine.build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

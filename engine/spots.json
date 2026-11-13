@@ -1,0 +1,74 @@
+{
+  "timezone": "America/New_York",
+  "calibration": {
+    "_note": "Shelf factor scales the deep-water breaker estimate down to what the beach actually sees. Florida's wide, shallow shelf eats a lot of energy. Tune this against real sessions.",
+    "shelf_factor": 0.6
+  },
+  "tide_stations": {
+    "8721120": "Daytona Beach Shores (Sunglow Pier), ocean side",
+    "8721147": "Ponce de Leon Inlet South"
+  },
+  "nudge_buoy": "41070",
+  "buoys": [
+    {"id": "41070", "name": "Ponce de Leon Inlet"},
+    {"id": "41113", "name": "Cape Canaveral Nearshore"},
+    {"id": "41009", "name": "Canaveral 20 NM offshore"}
+  ],
+  "spots": [
+    {
+      "id": "ponce-north",
+      "name": "Ponce Inlet",
+      "subtitle": "North side · Lighthouse Point",
+      "lat": 29.0790, "lon": -80.9190,
+      "facing": 80,
+      "tide_station": "8721147",
+      "best_tide": "mid",
+      "shelter": [{"from": 120, "to": 200, "factor": 0.5, "why": "south jetty blocks SE-S swell (guess)"}],
+      "notes": "Starting guess. Edit once you tell me how it really works."
+    },
+    {
+      "id": "nsb-inlet",
+      "name": "New Smyrna Inlet",
+      "subtitle": "South side · jetty",
+      "lat": 29.0635, "lon": -80.9125,
+      "facing": 65,
+      "tide_station": "8721147",
+      "best_tide": "mid",
+      "shelter": [{"from": 330, "to": 30, "factor": 0.6, "why": "north jetty shadows straight-N swell (guess)"}],
+      "notes": "Starting guess."
+    },
+    {
+      "id": "flagler",
+      "name": "Flagler Ave",
+      "subtitle": "New Smyrna Beach",
+      "lat": 29.0417, "lon": -80.8963,
+      "facing": 70,
+      "tide_station": "8721120",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Open beach break."
+    },
+    {
+      "id": "27th-ave",
+      "name": "27th Ave",
+      "subtitle": "New Smyrna Beach",
+      "lat": 29.0010, "lon": -80.8720,
+      "facing": 70,
+      "tide_station": "8721120",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Open beach break."
+    },
+    {
+      "id": "bethune",
+      "name": "Bethune Beach",
+      "subtitle": "South of NSB",
+      "lat": 28.9560, "lon": -80.8470,
+      "facing": 70,
+      "tide_station": "8721120",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Open beach break."
+    }
+  ]
+}

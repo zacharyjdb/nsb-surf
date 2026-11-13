@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Surf frame — today view</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#000}a:hover{color:#444}
+</style>
+</helmet>
+<div style="width: 1072px; height: 1448px; box-sizing: border-box; padding: 56px 56px 48px; background: #ffffff; color: #000000; font-family: 'Archivo', sans-serif; display: flex; flex-direction: column; gap: 34px; filter: {{filterVal}}">
+
+  <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 4px solid #000; padding-bottom: 18px">
+    <div style="font-size: 40px; font-weight: 900; font-stretch: 75%; letter-spacing: 2px">NSB · PONCE</div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; color: #333">THU NOV 12 · 11:00A</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div style="font-size: 92px; font-weight: 900; font-stretch: 78%; line-height: 0.95; letter-spacing: -2px">Small, clean.<br>Go early.</div>
+    <div style="font-size: 32px; line-height: 1.35; color: #111; max-width: 920px">Knee-to-waist ENE groundswell at 8 seconds with light westerly offshores all day. Best on the push to the 10a high, fading after lunch as the period drops.</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 3px solid #000; border-bottom: 3px solid #000">
+    <div style="padding: 18px 0 18px 0; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #444">SURF</div><div style="font-size: 64px; font-weight: 900; font-stretch: 80%">1–2 ft</div></div>
+    <div style="padding: 18px 0 18px 24px; border-left: 2px solid #000; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #444">SWELL</div><div style="font-size: 64px; font-weight: 900; font-stretch: 80%">8s ENE</div></div>
+    <div style="padding: 18px 0 18px 24px; border-left: 2px solid #000; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #444">WIND</div><div style="font-size: 64px; font-weight: 900; font-stretch: 80%">W 4–8</div></div>
+    <div style="padding: 18px 0 18px 24px; border-left: 2px solid #000; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #444">WATER</div><div style="font-size: 64px; font-weight: 900; font-stretch: 80%">78°</div></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <div style="font-size: 24px; font-weight: 800; letter-spacing: 2px">HOUR BY HOUR</div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0">
+      <sc-for list="{{hours}}" as="h" hint-placeholder-count="7">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 0; background: {{h.bg}}; color: {{h.fg}}">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 600">{{h.t}}</div>
+          <div style="font-size: 40px; font-weight: 900; font-stretch: 80%">{{h.ft}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 22px">{{h.per}}s</div>
+          <svg aria-hidden="true" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate({{h.deg}}deg)"><path d="M12 3v17M7 15l5 5 5-5"></path></svg>
+          <div style="font-size: 28px; font-weight: 800">{{h.wind}}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <div style="font-size: 24px; font-weight: 800; letter-spacing: 2px">TIDE · PONCE INLET</div>
+    <svg role="img" aria-label="Tide today: low 0.7 ft at 3:12a, high 3.8 ft at 10:01a, low 1.0 ft at 4:18p, high 2.9 ft at 10:13p" width="960" height="230" viewBox="0 0 960 230" style="font-family: 'IBM Plex Mono', monospace">
+      <path d="M0,190 L0,91.7 L40,115.4 L80,133.4 L120,141.8 L160,138.0 L200,122.6 L240,99.1 L280,72.0 L320,47.5 L360,30.5 L400,24.1 L440,31.2 L480,51.7 L520,78.6 L560,103.7 L600,122.3 L640,131.2 L680,129.2 L720,117.9 L760,100.2 L800,80.8 L840,65.8 L880,58.7 L920,62.0 L960,77.2 L960,190 Z" fill="#c8c8c8"></path>
+      <path d="M0,91.7 L40,115.4 L80,133.4 L120,141.8 L160,138.0 L200,122.6 L240,99.1 L280,72.0 L320,47.5 L360,30.5 L400,24.1 L440,31.2 L480,51.7 L520,78.6 L560,103.7 L600,122.3 L640,131.2 L680,129.2 L720,117.9 L760,100.2 L800,80.8 L840,65.8 L880,58.7 L920,62.0 L960,77.2" fill="none" stroke="#000" stroke-width="5" stroke-linejoin="round"></path>
+      <line x1="0" y1="190" x2="960" y2="190" stroke="#000" stroke-width="3"></line>
+      <line x1="440" y1="0" x2="440" y2="190" stroke="#000" stroke-width="3" stroke-dasharray="8 6"></line>
+      <circle cx="440" cy="31.2" r="11" fill="#000"></circle>
+      <text x="452" y="18" font-size="20" font-weight="600">NOW</text>
+      <text x="128" y="172" font-size="22" text-anchor="middle">L 3:12a</text>
+      <text x="428" y="80" font-size="22" text-anchor="end" font-weight="600">H 10:01a</text>
+      <text x="652" y="165" font-size="22" text-anchor="middle">L 4:18p</text>
+      <text x="889" y="95" font-size="22" text-anchor="middle">H 10:13p</text>
+      <text x="240" y="220" font-size="20" text-anchor="middle">6a</text>
+      <text x="480" y="220" font-size="20" text-anchor="middle">12p</text>
+      <text x="720" y="220" font-size="20" text-anchor="middle">6p</text>
+    </svg>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px; border-top: 3px solid #000; padding-top: 22px; font-size: 28px; line-height: 1.35">
+    <div><span style="font-weight: 900">FRI</span> · 2–3 ft short-period N wind swell, NW 10. Crumbly but rideable on the 10:41a high.</div>
+    <div><span style="font-weight: 900">SAT · PICK OF THE WEEK</span> · 3 ft from the N, NW 8 mph. ★★★☆☆</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"invert":{"editor":"boolean","default":false},"$preview":{"width":1072,"height":1448}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const raw = [
+      ['6a', 1.8, 9, 294, '4'], ['8a', 1.8, 8, 219, '5'], ['10a', 1.8, 8, 223, '7'],
+      ['12p', 1.7, 8, 266, '8'], ['2p', 1.7, 8, 266, '7'], ['4p', 1.7, 7, 247, '7'], ['6p', 1.6, 7, 220, '6']
+    ];
+    const hours = raw.map((r, i) => ({
+      t: r[0], ft: r[1].toFixed(1), per: r[2], deg: r[3], wind: r[4],
+      bg: i === 2 ? '#000000' : 'transparent', fg: i === 2 ? '#ffffff' : '#000000'
+    }));
+    return { hours, filterVal: this.props.invert ? 'invert(1)' : 'none' };
+  }
+}
+</script>
+</body>
+</html>

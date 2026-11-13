@@ -1,0 +1,9 @@
+public/
+mockups/*.html
+__pycache__/
+*.pyc
+.DS_Store
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcuserstate
