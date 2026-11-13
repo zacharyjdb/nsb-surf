@@ -6,6 +6,11 @@ struct SpotDetailView: View {
     let spotID: String
     @State private var selectedDate: String?
 
+    init(spotID: String, date: String? = nil) {
+        self.spotID = spotID
+        _selectedDate = State(initialValue: date)
+    }
+
     var body: some View {
         if let spot = store.spot(spotID) {
             let days = spot.upcomingDays
@@ -121,6 +126,7 @@ struct DayPicker: View {
     let onSelect: (String) -> Void
 
     var body: some View {
+        ScrollViewReader { proxy in
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(days) { d in
@@ -134,7 +140,7 @@ struct DayPicker: View {
                             RoundedRectangle(cornerRadius: 2).fill(Theme.rating(d.stars)).frame(height: 4)
                             Text(d.surfLabel).font(.system(size: 12, weight: .bold))
                         }
-                        .foregroundStyle(isSel ? Color.black : Theme.text)
+                        .foregroundStyle(isSel ? Theme.card : Theme.text)
                         .frame(width: 52)
                         .padding(.vertical, 10)
                         .background(isSel ? Theme.text : Theme.card, in: RoundedRectangle(cornerRadius: 10))
@@ -142,8 +148,11 @@ struct DayPicker: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(LocalTime.format(d.day, "EEEE MMMM d")), \(d.surfLabel) feet, \(d.rating)")
+                    .id(d.date)
                 }
             }
+        }
+        .onAppear { if let selected { proxy.scrollTo(selected, anchor: .center) } }
         }
     }
 }

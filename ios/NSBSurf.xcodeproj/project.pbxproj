@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A723635381C1E1D26FFFA77 /* OutlookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E1490DA8B9B06E47BE204D /* OutlookTests.swift */; };
 		0BA1BD7C1A62BBC0A3685FE9 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1191E014ACF295004020F224 /* Theme.swift */; };
 		367D379DE9671E705E59763A /* SpotListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8195BA803D1D7675A079EC71 /* SpotListView.swift */; };
 		44B84387D71F8826B86D1ADB /* ForecastDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */; };
+		52F50C8365580B4FC1F3F7B6 /* Outlook.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B14FFC96C9AE82B44461F9 /* Outlook.swift */; };
 		535C7D1D540078104EB0D6EF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC5B25037E6164A8294C2A1 /* Models.swift */; };
 		6A185CFDC93B4F458DC6F4BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 670B1CA41A0CF9564221B5A2 /* Assets.xcassets */; };
 		9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */; };
 		9E89B4CBF867AD6A5AF0E868 /* SampleForecast.json in Resources */ = {isa = PBXBuildFile; fileRef = 557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */; };
+		A9F9B7FAAE2409B2DC5BC634 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D811F192B4198087DC6DB7 /* HomeView.swift */; };
 		C32FD667012501670BC18D89 /* NSBSurfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF4041181C82C337FA6A54 /* NSBSurfApp.swift */; };
 		EEA1344D71913A9FFFE0DE52 /* ForecastStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237EF5850DC94CCB3474FB6B /* ForecastStore.swift */; };
 /* End PBXBuildFile section */
@@ -39,6 +42,9 @@
 		5DC5B25037E6164A8294C2A1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		670B1CA41A0CF9564221B5A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8195BA803D1D7675A079EC71 /* SpotListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotListView.swift; sourceTree = "<group>"; };
+		86E1490DA8B9B06E47BE204D /* OutlookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlookTests.swift; sourceTree = "<group>"; };
+		A3D811F192B4198087DC6DB7 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A4B14FFC96C9AE82B44461F9 /* Outlook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Outlook.swift; sourceTree = "<group>"; };
 		D5F8F6D2DFC2A5A4BE936125 /* NSBSurf.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NSBSurf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -58,6 +64,7 @@
 			children = (
 				237EF5850DC94CCB3474FB6B /* ForecastStore.swift */,
 				5DC5B25037E6164A8294C2A1 /* Models.swift */,
+				A4B14FFC96C9AE82B44461F9 /* Outlook.swift */,
 				557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */,
 			);
 			path = Shared;
@@ -67,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				670B1CA41A0CF9564221B5A2 /* Assets.xcassets */,
+				A3D811F192B4198087DC6DB7 /* HomeView.swift */,
 				02AF4041181C82C337FA6A54 /* NSBSurfApp.swift */,
 				0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */,
 				8195BA803D1D7675A079EC71 /* SpotListView.swift */,
@@ -88,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */,
+				86E1490DA8B9B06E47BE204D /* OutlookTests.swift */,
 			);
 			path = NSBSurfTests;
 			sourceTree = "<group>";
@@ -188,8 +197,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEA1344D71913A9FFFE0DE52 /* ForecastStore.swift in Sources */,
+				A9F9B7FAAE2409B2DC5BC634 /* HomeView.swift in Sources */,
 				535C7D1D540078104EB0D6EF /* Models.swift in Sources */,
 				C32FD667012501670BC18D89 /* NSBSurfApp.swift in Sources */,
+				52F50C8365580B4FC1F3F7B6 /* Outlook.swift in Sources */,
 				9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */,
 				367D379DE9671E705E59763A /* SpotListView.swift in Sources */,
 				0BA1BD7C1A62BBC0A3685FE9 /* Theme.swift in Sources */,
@@ -201,6 +212,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44B84387D71F8826B86D1ADB /* ForecastDecodingTests.swift in Sources */,
+				0A723635381C1E1D26FFFA77 /* OutlookTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,7 +254,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "NSB Surf";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -263,7 +275,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "NSB Surf";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

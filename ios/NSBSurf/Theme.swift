@@ -1,24 +1,31 @@
 import SwiftUI
 
 enum Theme {
-    static let bg = Color(hex: 0x0A1220)
-    static let card = Color(hex: 0x121B2C)
-    static let cardRaised = Color(hex: 0x1A2538)
-    static let divider = Color(hex: 0x243049)
-    static let text = Color.white
-    static let secondary = Color(hex: 0x9AA7BD)
-    static let accent = Color(hex: 0x41C7F9)
+    // Light "beach morning" palette: off-white sand, sea-glass greens, ocean blues, deep-water navy text.
+    static let bg = Color(hex: 0xF4F1EA)          // warm off-white
+    static let card = Color(hex: 0xFFFDF8)        // paper white
+    static let cardRaised = Color(hex: 0xE6F0EE)  // pale sea glass
+    static let divider = Color(hex: 0xE2E3DC)
+    static let text = Color(hex: 0x0E2A3B)        // deep-water navy
+    static let secondary = Color(hex: 0x5F7480)   // slate
+    static let accent = Color(hex: 0x1C6E9E)      // ocean blue
+    static let shadow = Color(hex: 0x0E2A3B).opacity(0.07)
 
-    /// 0 Flat … 5 Epic
+    /// 0 Flat … 5 Epic, from dry sand through sea glass to deep water.
     static func rating(_ stars: Int) -> Color {
         switch stars {
-        case ...0: return Color(hex: 0x5B6472)
-        case 1: return Color(hex: 0xE5484D)
-        case 2: return Color(hex: 0xF28C28)
-        case 3: return Color(hex: 0xF5C518)
-        case 4: return Color(hex: 0x30A46C)
-        default: return Color(hex: 0x3E8BFF)
+        case ...0: return Color(hex: 0xC3C8C6)  // flat: driftwood
+        case 1: return Color(hex: 0xDCC39A)     // poor: wet sand
+        case 2: return Color(hex: 0x9ED5C3)     // poor to fair: shallow seafoam
+        case 3: return Color(hex: 0x3FAE8C)     // fair: sea glass
+        case 4: return Color(hex: 0x16856F)     // good: deep teal-green
+        default: return Color(hex: 0x1D5FA6)    // epic: deep blue
         }
+    }
+
+    /// Text color that reads on top of a rating color.
+    static func onRating(_ stars: Int) -> Color {
+        stars <= 2 ? text : .white
     }
 
     static let ratingNames = ["Flat", "Poor", "Poor to fair", "Fair", "Good", "Epic"]
@@ -26,11 +33,11 @@ enum Theme {
 
     static func wind(_ kind: String) -> Color {
         switch kind {
-        case "glassy", "offshore": return Color(hex: 0x30A46C)
-        case "cross-offshore": return Color(hex: 0x7BC96F)
-        case "cross": return Color(hex: 0xF5C518)
-        case "cross-onshore": return Color(hex: 0xF28C28)
-        case "onshore": return Color(hex: 0xE5484D)
+        case "glassy", "offshore": return Color(hex: 0x1F9470)
+        case "cross-offshore": return Color(hex: 0x3FA284)
+        case "cross": return Color(hex: 0xB98A1E)
+        case "cross-onshore": return Color(hex: 0xD2693F)
+        case "onshore": return Color(hex: 0xC2493A)
         default: return secondary
         }
     }
@@ -81,7 +88,7 @@ struct RatingPill: View {
         Text(Theme.ratingName(stars).uppercased())
             .font(.system(size: 11, weight: .heavy))
             .tracking(0.6)
-            .foregroundStyle(stars == 3 ? Color.black : Color.white)
+            .foregroundStyle(Theme.onRating(stars))
             .padding(.horizontal, 8).padding(.vertical, 4)
             .background(Theme.rating(stars), in: RoundedRectangle(cornerRadius: 4))
     }
@@ -103,6 +110,7 @@ struct Card<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: 14))
+        .shadow(color: Theme.shadow, radius: 8, y: 2)
     }
 }
 

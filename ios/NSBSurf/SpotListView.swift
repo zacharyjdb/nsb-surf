@@ -33,7 +33,6 @@ struct SpotListView: View {
             .navigationDestination(for: Spot.self) { spot in
                 SpotDetailView(spotID: spot.id)
             }
-            .task { await store.refresh() }
             .toolbar(.hidden, for: .navigationBar)
         }
     }
@@ -118,6 +117,7 @@ struct SpotRow: View {
         }
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .shadow(color: Theme.shadow, radius: 8, y: 2)
         .accessibilityElement(children: .combine)
     }
 }
@@ -170,5 +170,6 @@ struct BuoyList: View {
         }
         .padding(.horizontal, 16)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: 14))
+        .shadow(color: Theme.shadow, radius: 8, y: 2)
     }
 }

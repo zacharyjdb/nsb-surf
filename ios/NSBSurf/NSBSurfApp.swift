@@ -6,10 +6,22 @@ struct NSBSurfApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SpotListView()
+            RootView()
                 .environment(store)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(.light)
                 .tint(Theme.accent)
         }
+    }
+}
+
+struct RootView: View {
+    @Environment(ForecastStore.self) private var store
+
+    var body: some View {
+        TabView {
+            Tab("Home", systemImage: "house.fill") { HomeView() }
+            Tab("Spots", systemImage: "water.waves") { SpotListView() }
+        }
+        .task { await store.refresh() }
     }
 }
