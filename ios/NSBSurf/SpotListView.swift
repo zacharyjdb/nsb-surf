@@ -116,7 +116,7 @@ struct SpotRow: View {
             .padding(14)
         }
         .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: Theme.shadow, radius: 8, y: 2)
         .accessibilityElement(children: .combine)
     }
@@ -169,7 +169,7 @@ struct BuoyList: View {
             }
         }
         .padding(.horizontal, 16)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 14))
+        .background(Theme.card, in: RoundedRectangle(cornerRadius: 20))
         .shadow(color: Theme.shadow, radius: 8, y: 2)
     }
 }

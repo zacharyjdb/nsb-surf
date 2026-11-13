@@ -8,3 +8,5 @@ xcuserdata/
 DerivedData/
 *.xcuserstate
 ios/build/
+design/inspo/*.png
+design/inspo/*.jpg

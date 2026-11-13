@@ -148,12 +148,19 @@ struct TargetCard: View {
             .foregroundStyle(Theme.accent)
         }
         .padding(18)
-        .background(
-            LinearGradient(colors: [color.opacity(0.35), Theme.card], startPoint: .topLeading, endPoint: .bottom),
-            in: RoundedRectangle(cornerRadius: 18)
-        )
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(color.opacity(0.7), lineWidth: 1.5))
-        .shadow(color: Theme.shadow, radius: 10, y: 3)
+        .background {
+            ZStack(alignment: .top) {
+                Theme.card
+                // Two layered waves across the top, like water in a glass.
+                LinearGradient(colors: [Theme.cardRaised, Theme.cardRaised.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                    .frame(height: 132)
+                WaveShape(level: 0.74, amplitude: 7, phase: .pi).fill(color.opacity(0.22)).frame(height: 132)
+                WaveShape(level: 0.86, amplitude: 6).fill(Theme.card).frame(height: 132)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+        }
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Theme.accent.opacity(0.25), lineWidth: 1))
+        .shadow(color: Theme.shadow, radius: 14, y: 5)
     }
 
     private func dayName(_ day: Day) -> String {
@@ -283,8 +290,7 @@ struct HorizonCard: View {
             Image(systemName: "chevron.right").foregroundStyle(Theme.secondary)
         }
         .padding(16)
-        .background(Theme.cardRaised, in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.accent.opacity(0.35), lineWidth: 1))
+        .background(Theme.cardRaised, in: RoundedRectangle(cornerRadius: 20))
     }
 }
 
