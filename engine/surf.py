@@ -73,6 +73,8 @@ def surf_height(spot: dict, row: dict, shelf_factor: float) -> dict:
     if not comps and row.get("wave_height"):
         comps = [{"h_m": row["wave_height"], "period": row.get("wave_period") or 6,
                   "dir": row.get("wave_direction") or spot["facing"], "kind": "swell"}]
+    # Only trains that actually reach this beach (drops offshore-wind chop heading out to sea).
+    comps = [c for c in comps if exposure(spot, c["dir"]) > 0]
     energy = 0.0
     best, best_hb = None, -1.0
     for c in comps:

@@ -64,22 +64,29 @@ def buoy_nudge(wave: dict, obs: dict | None, now_local: datetime) -> float:
 
 
 def apply_nudge(wave: dict, ratio: float, now_local: datetime) -> None:
-    """Scale wave heights by ratio now, fading back to the raw model over NUDGE_HOURS."""
+    """Scale wave heights by ratio now, fading back to the raw model over NUDGE_HOURS.
+
+    Earlier hours of today get the full ratio too, so today's chart has no jump at "now".
+    """
     if abs(ratio - 1.0) < 0.05:
         return
     start = now_local.strftime("%Y-%m-%dT%H:00")
+    today = start[:10]
     k = 0
     for i, ts in enumerate(wave["time"]):
         if ts < start:
-            continue
-        w = max(0.0, 1 - k / NUDGE_HOURS)
-        if w == 0:
-            break
+            if ts[:10] != today:
+                continue
+            w = 1.0
+        else:
+            w = max(0.0, 1 - k / NUDGE_HOURS)
+            if w == 0:
+                break
+            k += 1
         f = 1 + (ratio - 1) * w
         for v in ("wave_height", "swell_wave_height", "secondary_swell_wave_height", "wind_wave_height"):
             if wave[v][i] is not None:
                 wave[v][i] *= f
-        k += 1
 
 
 def thin(hourly: list[dict], days_full: int = 7, step: int = 3) -> list[dict]:

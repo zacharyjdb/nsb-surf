@@ -1,0 +1,454 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BA1BD7C1A62BBC0A3685FE9 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1191E014ACF295004020F224 /* Theme.swift */; };
+		367D379DE9671E705E59763A /* SpotListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8195BA803D1D7675A079EC71 /* SpotListView.swift */; };
+		44B84387D71F8826B86D1ADB /* ForecastDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */; };
+		535C7D1D540078104EB0D6EF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC5B25037E6164A8294C2A1 /* Models.swift */; };
+		6A185CFDC93B4F458DC6F4BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 670B1CA41A0CF9564221B5A2 /* Assets.xcassets */; };
+		9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */; };
+		9E89B4CBF867AD6A5AF0E868 /* SampleForecast.json in Resources */ = {isa = PBXBuildFile; fileRef = 557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */; };
+		C32FD667012501670BC18D89 /* NSBSurfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AF4041181C82C337FA6A54 /* NSBSurfApp.swift */; };
+		EEA1344D71913A9FFFE0DE52 /* ForecastStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237EF5850DC94CCB3474FB6B /* ForecastStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E593A31997CF94701D835A8A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2537C35BCB0C62BD0203B1B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D227BC5D6BF21B54F74E85F;
+			remoteInfo = NSBSurf;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02AF4041181C82C337FA6A54 /* NSBSurfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBSurfApp.swift; sourceTree = "<group>"; };
+		08251A80EE03421A4826E3D7 /* NSBSurfTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NSBSurfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailView.swift; sourceTree = "<group>"; };
+		1191E014ACF295004020F224 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		237EF5850DC94CCB3474FB6B /* ForecastStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastStore.swift; sourceTree = "<group>"; };
+		39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDecodingTests.swift; sourceTree = "<group>"; };
+		557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SampleForecast.json; sourceTree = "<group>"; };
+		5DC5B25037E6164A8294C2A1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		670B1CA41A0CF9564221B5A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8195BA803D1D7675A079EC71 /* SpotListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotListView.swift; sourceTree = "<group>"; };
+		D5F8F6D2DFC2A5A4BE936125 /* NSBSurf.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NSBSurf.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		08B5123F8CE5E063DC6E1249 = {
+			isa = PBXGroup;
+			children = (
+				9F95407EDAA7E3FDD96D0EAA /* NSBSurf */,
+				CA38FDD0FE36D6CFFDEBCC6B /* NSBSurfTests */,
+				670D912EFEDE39DEE7541AE7 /* Shared */,
+				C16B8C67C8646D8F9C1F7A3A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		670D912EFEDE39DEE7541AE7 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				237EF5850DC94CCB3474FB6B /* ForecastStore.swift */,
+				5DC5B25037E6164A8294C2A1 /* Models.swift */,
+				557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		9F95407EDAA7E3FDD96D0EAA /* NSBSurf */ = {
+			isa = PBXGroup;
+			children = (
+				670B1CA41A0CF9564221B5A2 /* Assets.xcassets */,
+				02AF4041181C82C337FA6A54 /* NSBSurfApp.swift */,
+				0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */,
+				8195BA803D1D7675A079EC71 /* SpotListView.swift */,
+				1191E014ACF295004020F224 /* Theme.swift */,
+			);
+			path = NSBSurf;
+			sourceTree = "<group>";
+		};
+		C16B8C67C8646D8F9C1F7A3A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D5F8F6D2DFC2A5A4BE936125 /* NSBSurf.app */,
+				08251A80EE03421A4826E3D7 /* NSBSurfTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA38FDD0FE36D6CFFDEBCC6B /* NSBSurfTests */ = {
+			isa = PBXGroup;
+			children = (
+				39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */,
+			);
+			path = NSBSurfTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6FD47468CBC098103349ADF8 /* NSBSurfTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52C482408396E29DDFCE81B0 /* Build configuration list for PBXNativeTarget "NSBSurfTests" */;
+			buildPhases = (
+				E247F4AA4E59019389A09DE1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				40E9D18267CB7C5957CA7E5A /* PBXTargetDependency */,
+			);
+			name = NSBSurfTests;
+			packageProductDependencies = (
+			);
+			productName = NSBSurfTests;
+			productReference = 08251A80EE03421A4826E3D7 /* NSBSurfTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7D227BC5D6BF21B54F74E85F /* NSBSurf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C22B4D944F9827EAF58B138 /* Build configuration list for PBXNativeTarget "NSBSurf" */;
+			buildPhases = (
+				AB09654D6A489910F4DB4365 /* Sources */,
+				C7277D9ABBBB4ABDE467B412 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NSBSurf;
+			packageProductDependencies = (
+			);
+			productName = NSBSurf;
+			productReference = D5F8F6D2DFC2A5A4BE936125 /* NSBSurf.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2537C35BCB0C62BD0203B1B5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					6FD47468CBC098103349ADF8 = {
+						DevelopmentTeam = 7YH52RAULT;
+						ProvisioningStyle = Automatic;
+					};
+					7D227BC5D6BF21B54F74E85F = {
+						DevelopmentTeam = 7YH52RAULT;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 469A415A8426F39DE4E27644 /* Build configuration list for PBXProject "NSBSurf" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 08B5123F8CE5E063DC6E1249;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C16B8C67C8646D8F9C1F7A3A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D227BC5D6BF21B54F74E85F /* NSBSurf */,
+				6FD47468CBC098103349ADF8 /* NSBSurfTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C7277D9ABBBB4ABDE467B412 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A185CFDC93B4F458DC6F4BA /* Assets.xcassets in Resources */,
+				9E89B4CBF867AD6A5AF0E868 /* SampleForecast.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AB09654D6A489910F4DB4365 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEA1344D71913A9FFFE0DE52 /* ForecastStore.swift in Sources */,
+				535C7D1D540078104EB0D6EF /* Models.swift in Sources */,
+				C32FD667012501670BC18D89 /* NSBSurfApp.swift in Sources */,
+				9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */,
+				367D379DE9671E705E59763A /* SpotListView.swift in Sources */,
+				0BA1BD7C1A62BBC0A3685FE9 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E247F4AA4E59019389A09DE1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44B84387D71F8826B86D1ADB /* ForecastDecodingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		40E9D18267CB7C5957CA7E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D227BC5D6BF21B54F74E85F /* NSBSurf */;
+			targetProxy = E593A31997CF94701D835A8A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		002A183EF8820453B6DA65EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zacharybrown.nsbsurf.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NSBSurf.app/NSBSurf";
+			};
+			name = Debug;
+		};
+		406C0F8A9CAB6C688D17A8A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "NSB Surf";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zacharybrown.nsbsurf;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		7C9A03844DCA25B69D15AC57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "NSB Surf";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zacharybrown.nsbsurf;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		B115434EC448E912E5248C1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7YH52RAULT;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B75F8859A8A7E9A9D093A9AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7YH52RAULT;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FDF86A0CA450689671CA1447 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zacharybrown.nsbsurf.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NSBSurf.app/NSBSurf";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		469A415A8426F39DE4E27644 /* Build configuration list for PBXProject "NSBSurf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B115434EC448E912E5248C1B /* Debug */,
+				B75F8859A8A7E9A9D093A9AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		52C482408396E29DDFCE81B0 /* Build configuration list for PBXNativeTarget "NSBSurfTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				002A183EF8820453B6DA65EB /* Debug */,
+				FDF86A0CA450689671CA1447 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7C22B4D944F9827EAF58B138 /* Build configuration list for PBXNativeTarget "NSBSurf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				406C0F8A9CAB6C688D17A8A4 /* Debug */,
+				7C9A03844DCA25B69D15AC57 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2537C35BCB0C62BD0203B1B5 /* Project object */;
+}
