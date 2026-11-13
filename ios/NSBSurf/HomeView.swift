@@ -126,7 +126,7 @@ struct TargetCard: View {
                         .foregroundStyle(Theme.secondary)
                     ForEach(others) { o in
                         HStack(spacing: 8) {
-                            Circle().fill(Theme.rating(o.stars)).frame(width: 8, height: 8)
+                            Circle().fill(Theme.rating(o.stars)).frame(width: 8, height: 8).glow(o.stars)
                             Text(o.spot.name)
                                 .font(.system(size: 14, weight: o.spot.id == target.spot.id ? .bold : .regular))
                                 .foregroundStyle(Theme.text)
@@ -154,13 +154,14 @@ struct TargetCard: View {
                 // Two layered waves across the top, like water in a glass.
                 LinearGradient(colors: [Theme.cardRaised, Theme.cardRaised.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                     .frame(height: 132)
-                WaveShape(level: 0.74, amplitude: 7, phase: .pi).fill(color.opacity(0.22)).frame(height: 132)
+                WaveShape(level: 0.74, amplitude: 7, phase: .pi).fill(Theme.accent.opacity(0.14)).frame(height: 132)
                 WaveShape(level: 0.86, amplitude: 6).fill(Theme.card).frame(height: 132)
             }
             .clipShape(RoundedRectangle(cornerRadius: 24))
         }
-        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Theme.accent.opacity(0.25), lineWidth: 1))
-        .shadow(color: Theme.shadow, radius: 14, y: 5)
+        .overlay(RoundedRectangle(cornerRadius: 24)
+            .stroke(target.stars >= 4 ? color : Theme.accent.opacity(0.25), lineWidth: target.stars >= 4 ? 2 : 1))
+        .shadow(color: target.stars >= 4 ? color.opacity(0.45) : Theme.shadow, radius: target.stars >= 4 ? 18 : 14, y: 5)
     }
 
     private func dayName(_ day: Day) -> String {
@@ -198,6 +199,7 @@ struct WeekGlance: View {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(Theme.rating(d.stars))
                                 .frame(height: 10 + CGFloat(max(d.score, 0.3)) * 14)
+                                .glow(d.stars)
                             Text(d.day.surfLabel)
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundStyle(Theme.text)
@@ -285,6 +287,7 @@ struct HorizonCard: View {
                     .font(.system(size: 15, weight: .bold)).foregroundStyle(Theme.text)
                 Text("Long range, so treat it as a heads-up, not a plan.")
                     .font(.system(size: 13)).foregroundStyle(Theme.secondary)
+                RatingPill(stars: item.stars).padding(.top, 4)
             }
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").foregroundStyle(Theme.secondary)
@@ -306,7 +309,7 @@ struct RightNow: View {
                     let (spot, h) = pair
                     NavigationLink(value: SpotLink(spotID: spot.id)) {
                         HStack(spacing: 10) {
-                            Circle().fill(Theme.rating(h.stars)).frame(width: 8, height: 8)
+                            Circle().fill(Theme.rating(h.stars)).frame(width: 8, height: 8).glow(h.stars)
                             Text(spot.name).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.text)
                             Spacer()
                             Text("\(h.windMph ?? 0) \(Theme.windName(h.windKind).lowercased())")

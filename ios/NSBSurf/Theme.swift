@@ -11,21 +11,26 @@ enum Theme {
     static let accent = Color(hex: 0x2F7CF6)      // bright ocean blue
     static let shadow = Color(hex: 0x1B3A6B).opacity(0.07)
 
-    /// 0 Flat … 5 Epic, as deepening water: pale shallows to deep navy.
+    /// 0 Flat … 5 Epic. The one place the blue theme gives way: bad is red/amber, fair is yellow, good is green.
     static func rating(_ stars: Int) -> Color {
         switch stars {
-        case ...0: return Color(hex: 0xD3DAE4)  // flat: gray
-        case 1: return Color(hex: 0xB9D4F8)     // poor: shallow
-        case 2: return Color(hex: 0x86B5F6)     // poor to fair
-        case 3: return Color(hex: 0x4A90F0)     // fair
-        case 4: return Color(hex: 0x2563EB)     // good
-        default: return Color(hex: 0x1A3A8F)    // epic: deep water
+        case ...0: return Color(hex: 0xC5CDD8)  // flat: gray
+        case 1: return Color(hex: 0xE5534B)     // poor: red
+        case 2: return Color(hex: 0xF29A38)     // poor to fair: amber
+        case 3: return Color(hex: 0xF2C94C)     // fair: yellow
+        case 4: return Color(hex: 0x22B573)     // good: green
+        default: return Color(hex: 0x0FCB7E)    // epic: bright green, bigger glow
         }
     }
 
     /// Text color that reads on top of a rating color.
     static func onRating(_ stars: Int) -> Color {
-        stars <= 2 ? text : .white
+        (stars == 2 || stars == 3 || stars <= 0) ? text : .white
+    }
+
+    /// Good and epic surf glows; everything else sits flat.
+    static func glowRadius(_ stars: Int) -> CGFloat {
+        stars >= 5 ? 12 : (stars == 4 ? 7 : 0)
     }
 
     static let ratingNames = ["Flat", "Poor", "Poor to fair", "Fair", "Good", "Epic"]
@@ -33,11 +38,11 @@ enum Theme {
 
     static func wind(_ kind: String) -> Color {
         switch kind {
-        case "glassy", "offshore": return Color(hex: 0x2563EB)
-        case "cross-offshore": return Color(hex: 0x4A90F0)
-        case "cross": return Color(hex: 0x7C8BA3)
-        case "cross-onshore": return Color(hex: 0xD98A4E)
-        case "onshore": return Color(hex: 0xD9534F)
+        case "glassy", "offshore": return Color(hex: 0x1FA463)
+        case "cross-offshore": return Color(hex: 0x58B47E)
+        case "cross": return Color(hex: 0xC99A1A)
+        case "cross-onshore": return Color(hex: 0xE0852B)
+        case "onshore": return Color(hex: 0xD9483F)
         default: return secondary
         }
     }
@@ -91,6 +96,7 @@ struct RatingPill: View {
             .foregroundStyle(Theme.onRating(stars))
             .padding(.horizontal, 8).padding(.vertical, 4)
             .background(Theme.rating(stars), in: Capsule())
+            .glow(stars)
     }
 }
 
@@ -138,5 +144,13 @@ struct WaveShape: Shape {
         p.addLine(to: CGPoint(x: r.minX, y: r.maxY))
         p.closeSubpath()
         return p
+    }
+}
+
+extension View {
+    /// A soft halo in the rating color for good and epic surf.
+    func glow(_ stars: Int) -> some View {
+        let r = Theme.glowRadius(stars)
+        return shadow(color: r > 0 ? Theme.rating(stars).opacity(0.6) : .clear, radius: r)
     }
 }

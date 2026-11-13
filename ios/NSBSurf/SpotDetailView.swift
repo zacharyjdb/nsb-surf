@@ -137,7 +137,7 @@ struct DayPicker: View {
                                 .font(.system(size: 11, weight: .heavy))
                             Text(LocalTime.format(d.day, "d"))
                                 .font(.system(size: 18, weight: .heavy))
-                            RoundedRectangle(cornerRadius: 2).fill(Theme.rating(d.stars)).frame(height: 4)
+                            RoundedRectangle(cornerRadius: 2).fill(Theme.rating(d.stars)).frame(height: 4).glow(d.stars)
                             Text(d.surfLabel).font(.system(size: 12, weight: .bold))
                         }
                         .foregroundStyle(isSel ? Theme.card : Theme.text)
