@@ -1,4 +1,6 @@
 // Renders the NSB Surf app icon (light, dark and tinted variants) at 1024x1024.
+// Style: flat, two colors, hand-drawn wave bands and a half sun, faint print grain
+// (see design/inspo/icon-*.png).
 // Run: swift design/icon/make_icon.swift <output dir>
 import CoreGraphics
 import Foundation
@@ -13,113 +15,72 @@ func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
 }
 
 struct Palette {
-    var skyTop: UInt32, skyBottom: UInt32
-    var sun: UInt32, sunGlow: CGFloat
-    var waveTop: UInt32, waveBottom: UInt32
-    var foam: UInt32, barrel: UInt32, glow: UInt32
-    var backSwell: UInt32, backSwellAlpha: CGFloat
-    var transparentBG = false
+    var bg: UInt32?      // nil = transparent (tinted)
+    var ink: UInt32      // sun and waves
+    var grain: CGFloat   // grain strength
 }
 
-let light = Palette(skyTop: 0x8CC8FF, skyBottom: 0x3B8BF7, sun: 0xFFD25E, sunGlow: 0.45,
-                    waveTop: 0x1F6FE8, waveBottom: 0x0B2E78, foam: 0xFFFFFF, barrel: 0x5FB0FF, glow: 0xFFFFFF,
-                    backSwell: 0xFFFFFF, backSwellAlpha: 0.22)
-let dark = Palette(skyTop: 0x0B1730, skyBottom: 0x13306B, sun: 0xFFC94D, sunGlow: 0.25,
-                   waveTop: 0x2F7CF6, waveBottom: 0x0B2A6B, foam: 0xEAF3FF, barrel: 0x1E4FA8, glow: 0xFFC94D,
-                   backSwell: 0x5B8DEF, backSwellAlpha: 0.25)
-// Tinted: grayscale on transparent; iOS applies the user's tint.
-let tinted = Palette(skyTop: 0x000000, skyBottom: 0x000000, sun: 0xFFFFFF, sunGlow: 0,
-                     waveTop: 0x9A9A9A, waveBottom: 0x5A5A5A, foam: 0xFFFFFF, barrel: 0x3A3A3A, glow: 0xFFFFFF,
-                     backSwell: 0xFFFFFF, backSwellAlpha: 0.2, transparentBG: true)
+let light = Palette(bg: 0x2F5FA8, ink: 0xF1EAD8, grain: 0.07)
+let dark = Palette(bg: 0x0E1F3F, ink: 0xE9DFC6, grain: 0.06)
+let tinted = Palette(bg: nil, ink: 0xFFFFFF, grain: 0)
 
-/// The breaking wave: back of the swell rising from the left, a lip pitching forward, curling into a barrel.
-func wavePath() -> CGPath {
-    let p = CGMutablePath()
-    p.move(to: CGPoint(x: -20, y: 790))
-    p.addCurve(to: CGPoint(x: 560, y: 300), control1: CGPoint(x: 200, y: 700), control2: CGPoint(x: 330, y: 300))
-    // lip throwing forward and down
-    p.addCurve(to: CGPoint(x: 850, y: 560), control1: CGPoint(x: 760, y: 300), control2: CGPoint(x: 880, y: 430))
-    // lip curls back up into the barrel
-    p.addCurve(to: CGPoint(x: 660, y: 560), control1: CGPoint(x: 810, y: 640), control2: CGPoint(x: 690, y: 640))
-    p.addCurve(to: CGPoint(x: 740, y: 470), control1: CGPoint(x: 645, y: 515), control2: CGPoint(x: 690, y: 465))
-    // inside of the barrel back down to the face
-    p.addCurve(to: CGPoint(x: 600, y: 470), control1: CGPoint(x: 690, y: 420), control2: CGPoint(x: 620, y: 420))
-    p.addCurve(to: CGPoint(x: 1044, y: 800), control1: CGPoint(x: 560, y: 640), control2: CGPoint(x: 800, y: 780))
-    p.addLine(to: CGPoint(x: 1044, y: 1044))
-    p.addLine(to: CGPoint(x: -20, y: 1044))
-    p.closeSubpath()
-    return p
+/// Deterministic wobble so the lines look drawn by hand but render the same every time.
+func wobble(_ x: CGFloat, _ seed: CGFloat) -> CGFloat {
+    sin(x * 0.011 + seed) * 5 + sin(x * 0.027 + seed * 2.3) * 3
 }
 
-/// The foam line along the crest and lip.
-func foamPath() -> CGPath {
+/// A wave band: a thick, round-capped stroke along a gently wobbling line, like a brush mark.
+func band(y: CGFloat, amp: CGFloat, phase: CGFloat, x0: CGFloat, x1: CGFloat, seed: CGFloat) -> CGMutablePath {
     let p = CGMutablePath()
-    p.move(to: CGPoint(x: 330, y: 470))
-    p.addCurve(to: CGPoint(x: 560, y: 300), control1: CGPoint(x: 400, y: 360), control2: CGPoint(x: 470, y: 300))
-    p.addCurve(to: CGPoint(x: 850, y: 560), control1: CGPoint(x: 760, y: 300), control2: CGPoint(x: 880, y: 430))
-    p.addCurve(to: CGPoint(x: 660, y: 560), control1: CGPoint(x: 810, y: 640), control2: CGPoint(x: 690, y: 640))
-    p.addCurve(to: CGPoint(x: 740, y: 470), control1: CGPoint(x: 645, y: 515), control2: CGPoint(x: 690, y: 465))
-    return p
-}
-
-/// A soft swell line out to sea behind the wave.
-func swellPath(y: CGFloat, amp: CGFloat) -> CGPath {
-    let p = CGMutablePath()
-    p.move(to: CGPoint(x: -20, y: y))
-    var x: CGFloat = -20
-    while x <= S + 20 {
-        p.addLine(to: CGPoint(x: x, y: y + amp * sin(x / S * .pi * 3)))
-        x += 8
+    var x = x0
+    p.move(to: CGPoint(x: x, y: y + amp * sin((x / S) * .pi * 2.4 + phase) + wobble(x, seed) * 0.6))
+    while x < x1 {
+        x = min(x + 6, x1)
+        p.addLine(to: CGPoint(x: x, y: y + amp * sin((x / S) * .pi * 2.4 + phase) + wobble(x, seed) * 0.6))
     }
-    p.addLine(to: CGPoint(x: S + 20, y: S + 20))
-    p.addLine(to: CGPoint(x: -20, y: S + 20))
-    p.closeSubpath()
     return p
 }
 
 func render(_ pal: Palette, to url: URL) {
+    let space = CGColorSpace(name: CGColorSpace.sRGB)!
     let ctx = CGContext(data: nil, width: Int(S), height: Int(S), bitsPerComponent: 8, bytesPerRow: 0,
-                        space: CGColorSpace(name: CGColorSpace.sRGB)!,
-                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    // Work in top-left coordinates.
+                        space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
     ctx.translateBy(x: 0, y: S)
     ctx.scaleBy(x: 1, y: -1)
-    let space = CGColorSpace(name: CGColorSpace.sRGB)!
 
-    if !pal.transparentBG {
-        let sky = CGGradient(colorsSpace: space, colors: [rgb(pal.skyTop), rgb(pal.skyBottom)] as CFArray, locations: [0, 1])!
-        ctx.drawLinearGradient(sky, start: .zero, end: CGPoint(x: 0, y: S), options: [])
+    if let bg = pal.bg {
+        ctx.setFillColor(rgb(bg)); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S))
     }
+    ctx.setFillColor(rgb(pal.ink))
 
-    // Sun, top left, with a soft halo.
-    let sunC = CGPoint(x: 290, y: 250), sunR: CGFloat = 105
-    if pal.sunGlow > 0 {
-        let glow = CGGradient(colorsSpace: space, colors: [rgb(pal.glow, pal.sunGlow), rgb(pal.glow, 0)] as CFArray, locations: [0, 1])!
-        ctx.drawRadialGradient(glow, startCenter: sunC, startRadius: sunR, endCenter: sunC, endRadius: sunR * 2.4, options: [])
-    }
-    ctx.setFillColor(rgb(pal.sun))
-    ctx.fillEllipse(in: CGRect(x: sunC.x - sunR, y: sunC.y - sunR, width: sunR * 2, height: sunR * 2))
+    // Half sun sitting on the water.
+    let sun = CGMutablePath()
+    sun.addArc(center: CGPoint(x: 512, y: 440), radius: 190, startAngle: .pi, endAngle: 0, clockwise: false)
+    sun.closeSubpath()
+    ctx.addPath(sun); ctx.fillPath()
 
-    // Distant swell lines.
-    ctx.setFillColor(rgb(pal.backSwell, pal.backSwellAlpha))
-    ctx.addPath(swellPath(y: 640, amp: 14)); ctx.fillPath()
-
-    // Inside of the barrel, seen through the curl.
-    ctx.setFillColor(rgb(pal.barrel))
-    ctx.fillEllipse(in: CGRect(x: 560, y: 400, width: 260, height: 260))
-
-    // The wave, filled with a deep-water gradient.
-    ctx.saveGState()
-    ctx.addPath(wavePath()); ctx.clip()
-    let water = CGGradient(colorsSpace: space, colors: [rgb(pal.waveTop), rgb(pal.waveBottom)] as CFArray, locations: [0, 1])!
-    ctx.drawLinearGradient(water, start: CGPoint(x: 0, y: 300), end: CGPoint(x: 0, y: S), options: [.drawsAfterEndLocation])
-    ctx.restoreGState()
-
-    // Foam on the lip.
-    ctx.setStrokeColor(rgb(pal.foam))
+    // Wave bands, longer and thicker toward the viewer. The nearest one breaks into a curl.
+    ctx.setStrokeColor(rgb(pal.ink))
     ctx.setLineCap(.round); ctx.setLineJoin(.round)
-    ctx.setLineWidth(42)
-    ctx.addPath(foamPath()); ctx.strokePath()
+    ctx.setLineWidth(44); ctx.addPath(band(y: 505, amp: 8, phase: 0.4, x0: 340, x1: 684, seed: 1)); ctx.strokePath()
+    ctx.setLineWidth(58); ctx.addPath(band(y: 615, amp: 14, phase: 1.6, x0: 230, x1: 640, seed: 4)); ctx.strokePath()
+    let near = band(y: 745, amp: 18, phase: 3.0, x0: 150, x1: 700, seed: 7)
+    let end = near.currentPoint
+    near.addCurve(to: CGPoint(x: 868, y: 640), control1: CGPoint(x: end.x + 100, y: end.y + 8),
+                  control2: CGPoint(x: 872, y: 700))
+    near.addCurve(to: CGPoint(x: 772, y: 612), control1: CGPoint(x: 864, y: 575), control2: CGPoint(x: 790, y: 560))
+    ctx.setLineWidth(72); ctx.addPath(near); ctx.strokePath()
+
+    // Faint print grain.
+    if pal.grain > 0 {
+        var seed: UInt64 = 42
+        func next() -> CGFloat { seed = seed &* 6364136223846793005 &+ 1442695040888963407; return CGFloat(seed >> 33) / CGFloat(1 << 31) }
+        for _ in 0..<26000 {
+            let x = next() * S, y = next() * S, r = 0.8 + next() * 1.6
+            ctx.setFillColor(next() < 0.5 ? rgb(0x000000, pal.grain) : rgb(0xFFFFFF, pal.grain))
+            ctx.fillEllipse(in: CGRect(x: x, y: y, width: r, height: r))
+        }
+    }
 
     let img = ctx.makeImage()!
     let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil)!

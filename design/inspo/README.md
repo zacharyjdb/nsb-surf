@@ -11,3 +11,10 @@ Reference images for the app's look. The images are other people's work, so they
 - `16-day-wind-strip.png`: a 16-day strip with three wind arrows under each day (morning, midday,
   afternoon). We color those arrows by wind speed, Windy-style: light blue when calm, through green
   and yellow, to orange, red and magenta when it's howling.
+
+## App icon direction (2026-11-14)
+
+- `icon-carved-wave.png`, `icon-sun-on-water.png`, `icon-wave-bands-poster.png`, `icon-wavy-stripes.png`
+- Flat, two colors only: warm cream (~#EFE8D8) and ocean blue (~#2F5FA8 / #3B6CC4). No gradients or gloss.
+- Hand-drawn feel: slightly wobbly wave bands, a curl at the end of a band, a half sun sitting on the water.
+- Faint print/risograph grain.
