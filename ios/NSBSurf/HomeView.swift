@@ -312,9 +312,17 @@ struct RightNow: View {
                             Circle().fill(Theme.rating(h.stars)).frame(width: 8, height: 8).glow(h.stars)
                             Text(spot.name).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.text)
                             Spacer()
-                            Text("\(h.windMph ?? 0) \(Theme.windName(h.windKind).lowercased())")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Theme.windSpeedText(h.windMph))
+                            VStack(alignment: .trailing, spacing: 1) {
+                                HStack(spacing: 3) {
+                                    DirectionArrow(from: h.windDir, size: 10, color: Theme.windSpeed(h.windMph))
+                                    Text("\(h.windMph ?? 0) mph \(h.windDirLabel)")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundStyle(Theme.windSpeedText(h.windMph))
+                                }
+                                Text("\(Theme.windName(h.windKind)) wind")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundStyle(Theme.secondary)
+                            }
                             Text("\(h.surfLabel) ft")
                                 .font(.system(size: 15, weight: .heavy)).foregroundStyle(Theme.text)
                                 .frame(width: 54, alignment: .trailing)
