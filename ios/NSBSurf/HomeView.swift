@@ -115,7 +115,7 @@ struct TargetCard: View {
                 if let p = day.primary {
                     fact("SWELL", "\(p.heightFt.oneDecimal)ft \(p.periodS.noDecimal)s \(p.dirLabel)")
                 }
-                fact("WIND AM", "\(day.windAm.mph ?? 0) \(day.windAm.dirLabel)", color: Theme.wind(day.windAm.kind))
+                fact("WIND AM", "\(day.windAm.mph ?? 0) \(day.windAm.dirLabel)", color: Theme.windSpeedText(day.windAm.mph))
             }
 
             if others.count > 1 {
@@ -314,7 +314,7 @@ struct RightNow: View {
                             Spacer()
                             Text("\(h.windMph ?? 0) \(Theme.windName(h.windKind).lowercased())")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Theme.wind(h.windKind))
+                                .foregroundStyle(Theme.windSpeedText(h.windMph))
                             Text("\(h.surfLabel) ft")
                                 .font(.system(size: 15, weight: .heavy)).foregroundStyle(Theme.text)
                                 .frame(width: 54, alignment: .trailing)

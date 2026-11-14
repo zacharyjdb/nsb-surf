@@ -18,7 +18,7 @@ struct SpotDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     NowHeader(spot: spot)
-                    DayPicker(days: days, selected: day?.date) { selectedDate = $0 }
+                    DayPicker(spot: spot, days: days, selected: day?.date) { selectedDate = $0 }
                     if let day {
                         let hours = spot.hours(on: day)
                         DaySummaryCard(day: day)
@@ -88,10 +88,10 @@ struct NowHeader: View {
                 }
                 stat("WIND") {
                     HStack(spacing: 4) {
-                        DirectionArrow(from: h?.windDir, size: 12, color: Theme.wind(h?.windKind ?? ""))
+                        DirectionArrow(from: h?.windDir, size: 12, color: Theme.windSpeed(h?.windMph))
                         Text("\(h?.windMph ?? 0) \(h?.windDirLabel ?? "")")
                     }
-                    Text(Theme.windName(h?.windKind ?? "")).foregroundStyle(Theme.wind(h?.windKind ?? ""))
+                    Text(Theme.windName(h?.windKind ?? "")).foregroundStyle(Theme.secondary)
                 }
                 stat("TIDE") {
                     Text("\(h?.tideFt?.oneDecimal ?? "–")ft")
@@ -121,6 +121,7 @@ struct NowHeader: View {
 // MARK: - Day picker
 
 struct DayPicker: View {
+    var spot: Spot? = nil
     let days: [Day]
     let selected: String?
     let onSelect: (String) -> Void
@@ -139,6 +140,7 @@ struct DayPicker: View {
                                 .font(.system(size: 18, weight: .heavy))
                             RoundedRectangle(cornerRadius: 2).fill(Theme.rating(d.stars)).frame(height: 4).glow(d.stars)
                             Text(d.surfLabel).font(.system(size: 12, weight: .bold))
+                            if let spot { WindTrio(hours: spot.hours(on: d), onDark: isSel) }
                         }
                         .foregroundStyle(isSel ? Theme.card : Theme.text)
                         .frame(width: 52)
@@ -197,7 +199,7 @@ struct DaySummaryCard: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(label).font(.system(size: 10, weight: .heavy)).foregroundStyle(Theme.secondary)
                 Text("\(wind.mph ?? 0) \(wind.dirLabel)").font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(Theme.wind(wind.kind))
+                    .foregroundStyle(Theme.windSpeedText(wind.mph))
             }
         }
     }
@@ -293,17 +295,17 @@ struct WindChartCard: View {
         Card(title: "Wind (mph)") {
             Chart(hours) { h in
                 BarMark(x: .value("Hour", h.date, unit: .hour), y: .value("mph", h.windMph ?? 0), width: .ratio(0.7))
-                    .foregroundStyle(Theme.wind(h.windKind))
+                    .foregroundStyle(Theme.windSpeed(h.windMph))
                     .cornerRadius(2)
                     .annotation(position: .top, spacing: 2) {
-                        if Calendar.current.component(.hour, from: h.date) % 3 == 0 {
-                            DirectionArrow(from: h.windDir, size: 9, color: Theme.secondary)
+                        if LocalTime.calendar.component(.hour, from: h.date) % 3 == 0 {
+                            DirectionArrow(from: h.windDir, size: 9, color: Theme.windSpeedText(h.windMph))
                         }
                     }
                 if let g = h.gustMph {
                     PointMark(x: .value("Hour", h.date, unit: .hour), y: .value("gust", g))
-                        .symbolSize(10)
-                        .foregroundStyle(Theme.secondary.opacity(0.7))
+                        .symbolSize(14)
+                        .foregroundStyle(Theme.windSpeed(g))
                 }
             }
             .chartXAxis { hourAxis() }
@@ -314,13 +316,8 @@ struct WindChartCard: View {
                 }
             }
             .frame(height: 140)
-            HStack(spacing: 10) {
-                ForEach(["offshore", "cross", "onshore"], id: \.self) { k in
-                    HStack(spacing: 4) {
-                        Circle().fill(Theme.wind(k)).frame(width: 7, height: 7)
-                        Text(Theme.windName(k)).font(.system(size: 10, weight: .semibold)).foregroundStyle(Theme.secondary)
-                    }
-                }
+            HStack(spacing: 12) {
+                WindSpeedLegend().frame(maxWidth: 220)
                 HStack(spacing: 4) {
                     Circle().fill(Theme.secondary.opacity(0.7)).frame(width: 4, height: 4)
                     Text("Gusts").font(.system(size: 10, weight: .semibold)).foregroundStyle(Theme.secondary)
@@ -433,5 +430,21 @@ struct LongRangeCard: View {
             Text("Faded bars are past day 7: useful for spotting a swell coming, not for planning a session.")
                 .font(.system(size: 12)).foregroundStyle(Theme.secondary)
         }
+    }
+}
+
+/// Three wind arrows for a day (9a, noon, 3p), colored by speed.
+struct WindTrio: View {
+    let hours: [Hour]
+    var onDark = false
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach([9, 12, 15], id: \.self) { hr in
+                let h = hours.first { LocalTime.calendar.component(.hour, from: $0.date) == hr }
+                DirectionArrow(from: h?.windDir, size: 10, color: Theme.windSpeed(h?.windMph))
+            }
+        }
+        .padding(.horizontal, 3).padding(.vertical, 2)
+        .background(onDark ? Color.white.opacity(0.9) : .clear, in: Capsule())
     }
 }

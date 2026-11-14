@@ -36,15 +36,39 @@ enum Theme {
     static let ratingNames = ["Flat", "Poor", "Poor to fair", "Fair", "Good", "Epic"]
     static func ratingName(_ stars: Int) -> String { ratingNames[max(0, min(5, stars))] }
 
-    static func wind(_ kind: String) -> Color {
-        switch kind {
-        case "glassy", "offshore": return Color(hex: 0x1FA463)
-        case "cross-offshore": return Color(hex: 0x58B47E)
-        case "cross": return Color(hex: 0xC99A1A)
-        case "cross-onshore": return Color(hex: 0xE0852B)
-        case "onshore": return Color(hex: 0xD9483F)
-        default: return secondary
-        }
+    /// Wind colored by speed, Windy-style: one smooth ramp from calm to howling.
+    /// Direction (offshore, onshore…) is shown in words; color is strength.
+    static let windStops: [(mph: Double, hex: UInt32)] = [
+        (0, 0x9DB2EC),   // calm: periwinkle
+        (4, 0x5B8DEF),   // light: blue
+        (8, 0x2DB3B5),   // gentle: teal
+        (12, 0x45BF63),  // moderate: green
+        (16, 0xD9C531),  // fresh: yellow
+        (20, 0xF08A2C),  // strong: orange
+        (26, 0xE0473D),  // very strong: red
+        (34, 0xB0399C),  // gale: magenta
+    ]
+
+    static func windSpeed(_ mph: Double?) -> Color {
+        let v = max(0, mph ?? 0)
+        let stops = windStops
+        guard let hi = stops.firstIndex(where: { $0.mph >= v }) else { return Color(hex: stops.last!.hex) }
+        if hi == 0 { return Color(hex: stops[0].hex) }
+        let a = stops[hi - 1], b = stops[hi]
+        let t = (v - a.mph) / (b.mph - a.mph)
+        return Color(mix: a.hex, b.hex, t)
+    }
+
+    static func windSpeed(_ mph: Int?) -> Color { windSpeed(mph.map(Double.init)) }
+
+    /// The same ramp, darkened a touch so it reads as text on white.
+    static func windSpeedText(_ mph: Int?) -> Color {
+        let v = Double(max(0, mph ?? 0))
+        let stops = windStops
+        let hi = stops.firstIndex(where: { $0.mph >= v }) ?? stops.count - 1
+        let lo = max(0, hi - 1)
+        let t = hi == lo ? 0 : min(1, (v - stops[lo].mph) / (stops[hi].mph - stops[lo].mph))
+        return Color(mix: stops[lo].hex, stops[hi].hex, t, darken: 0.22)
     }
 
     static func windName(_ kind: String) -> String {
@@ -61,6 +85,16 @@ enum Theme {
 }
 
 extension Color {
+    /// Linear blend of two hex colors, optionally darkened toward black.
+    init(mix a: UInt32, _ b: UInt32, _ t: Double, darken: Double = 0) {
+        func ch(_ h: UInt32, _ shift: UInt32) -> Double { Double((h >> shift) & 0xFF) / 255 }
+        let k = max(0, min(1, t)), d = 1 - darken
+        self.init(.sRGB,
+                  red: (ch(a, 16) + (ch(b, 16) - ch(a, 16)) * k) * d,
+                  green: (ch(a, 8) + (ch(b, 8) - ch(a, 8)) * k) * d,
+                  blue: (ch(a, 0) + (ch(b, 0) - ch(a, 0)) * k) * d)
+    }
+
     init(hex: UInt32) {
         self.init(.sRGB,
                   red: Double((hex >> 16) & 0xFF) / 255,
@@ -152,5 +186,26 @@ extension View {
     func glow(_ stars: Int) -> some View {
         let r = Theme.glowRadius(stars)
         return shadow(color: r > 0 ? Theme.rating(stars).opacity(0.6) : .clear, radius: r)
+    }
+}
+
+/// Windy-style legend: the speed ramp with a few mph ticks.
+struct WindSpeedLegend: View {
+    var body: some View {
+        VStack(spacing: 3) {
+            LinearGradient(stops: Theme.windStops.map {
+                .init(color: Color(hex: $0.hex), location: $0.mph / 34)
+            }, startPoint: .leading, endPoint: .trailing)
+            .frame(height: 6)
+            .clipShape(Capsule())
+            HStack {
+                ForEach([0, 8, 16, 26, 34], id: \.self) { v in
+                    Text(v == 34 ? "34+" : "\(v)")
+                    if v != 34 { Spacer() }
+                }
+            }
+            .font(.system(size: 9, weight: .semibold))
+            .foregroundStyle(Theme.secondary)
+        }
     }
 }

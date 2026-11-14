@@ -104,8 +104,8 @@ struct SpotRow: View {
                     if let n = now {
                         Label {
                             Text("\(n.windMph ?? 0) \(n.windDirLabel)")
-                        } icon: { DirectionArrow(from: n.windDir, size: 11, color: Theme.wind(n.windKind)) }
-                        .foregroundStyle(Theme.wind(n.windKind))
+                        } icon: { DirectionArrow(from: n.windDir, size: 11, color: Theme.windSpeed(n.windMph)) }
+                        .foregroundStyle(Theme.windSpeedText(n.windMph))
                     }
                     Spacer()
                 }
