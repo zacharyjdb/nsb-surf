@@ -27,7 +27,7 @@ WAVE_VARS = [
 FORECAST_DAYS = 16
 
 
-def _get(url: str, params: dict | None = None, retries: int = 3) -> str:
+def _get(url: str, params: dict | None = None, retries: int = 6) -> str:
     if params:
         url = url + "?" + urllib.parse.urlencode(params)
     last = None
@@ -36,9 +36,10 @@ def _get(url: str, params: dict | None = None, retries: int = 3) -> str:
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=30) as r:
                 return r.read().decode("utf-8")
-        except Exception as e:  # network hiccup: back off and retry
+        except Exception as e:  # network hiccup: back off and retry (5, 10, 20, 40, 60s)
             last = e
-            time.sleep(2 * (attempt + 1))
+            if attempt < retries - 1:
+                time.sleep(min(5 * 2 ** attempt, 60))
     raise RuntimeError(f"GET failed after {retries} tries: {url}: {last}")
 
 

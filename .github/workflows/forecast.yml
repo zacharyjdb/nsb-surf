@@ -20,6 +20,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      built: ${{ steps.forecast.outcome == 'success' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,15 +29,24 @@ jobs:
           python-version: "3.12"
       - name: Unit tests
         run: python -m unittest discover -s tests -t .
+      # A data source being down for one run isn't worth a failure email: the last
+      # forecast stays published and the next run (2 h later) tries again.
       - name: Build forecast
+        id: forecast
+        continue-on-error: ${{ github.event_name == 'schedule' }}
         run: python -m engine.build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - if: steps.forecast.outcome != 'success'
+        run: echo "::warning::Forecast sources unreachable; keeping the last published forecast."
+      - if: steps.forecast.outcome == 'success'
+        uses: actions/configure-pages@v5
+      - if: steps.forecast.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
   deploy:
     needs: build
+    if: needs.build.outputs.built == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
