@@ -21,7 +21,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zacharybrown.nsbsurf
-        INFOPLIST_KEY_CFBundleDisplayName: NSB Surf
+        INFOPLIST_KEY_CFBundleDisplayName: DUE EAST
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_UIUserInterfaceStyle: Light

@@ -18,3 +18,11 @@ Reference images for the app's look. The images are other people's work, so they
 - Flat, two colors only: warm cream (~#EFE8D8) and ocean blue (~#2F5FA8 / #3B6CC4). No gradients or gloss.
 - Hand-drawn feel: slightly wobbly wave bands, a curl at the end of a band, a half sun sitting on the water.
 - Faint print/risograph grain.
+
+## DUE EAST logo direction (2026-11-15)
+
+Replaces the cream print style above for the icon.
+
+- `logo-dashed-wave-flag.png`, `logo-three-waves-on-water.png`, `logo-mountain-sea-blocks.png`, `logo-new-wave.png`
+- Clean, geometric brand marks: stacked rounded wave strokes, some broken into dashes.
+- Royal blue (~#2457E6), sky blue (~#4FB6E6), navy (~#15305A), white or pale-blue ground.
