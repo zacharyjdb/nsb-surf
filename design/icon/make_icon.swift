@@ -1,15 +1,15 @@
 // Renders the DUE EAST app icon (light, dark and tinted variants) at 1024x1024.
-// The mark: "DUE" stacked over "EAST" in puffy, slightly wonky 70s-style lettering,
-// black ink on off-white with screen-print grain (mood from design/inspo/due-east-*.png).
-// The puffiness comes from stroking a heavy font's outlines with thick round joins.
-// Run: swift design/icon/make_icon.swift <output dir>
+// The mark: the Offshore Films wave (offshore-wave-mark.png, no text) inside a compass bezel,
+// with dashes around the ring and a green heading dash at due east (090°).
+// Run: swift design/icon/make_icon.swift <output dir>   (run from the repo root)
 import CoreGraphics
-import CoreText
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
 let S: CGFloat = 1024
+let C = CGPoint(x: S / 2, y: S / 2)
+let space = CGColorSpace(name: CGColorSpace.sRGB)!
 
 func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
     CGColor(srgbRed: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
@@ -17,86 +17,94 @@ func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
 }
 
 struct Palette {
-    var paper: UInt32?   // nil = transparent (tinted)
-    var ink: UInt32
-    var grain: CGFloat
+    var bgTop: UInt32?, bgBottom: UInt32?   // nil = transparent (tinted)
+    var line: UInt32                        // ring, dashes and wave
+    var heading: UInt32                     // the east dash
+    var glow: Bool
+}
+let lightPal = Palette(bgTop: 0x34507E, bgBottom: 0x223962, line: 0xFFFFFF, heading: 0x2FD18A, glow: true)
+let darkPal = Palette(bgTop: 0x1E3254, bgBottom: 0x111F3A, line: 0xEAF0F8, heading: 0x2FD18A, glow: true)
+let tintPal = Palette(bgTop: nil, bgBottom: nil, line: 0xFFFFFF, heading: 0xFFFFFF, glow: false)
+
+/// Compass bearing (0 = north, 90 = east, clockwise) at radius r, top-left coordinates.
+func polar(_ deg: CGFloat, _ r: CGFloat) -> CGPoint {
+    let a = deg * .pi / 180
+    return CGPoint(x: C.x + r * sin(a), y: C.y - r * cos(a))
 }
 
-let lightPal = Palette(paper: 0xF1EEE7, ink: 0x161616, grain: 0.08)
-let darkPal = Palette(paper: 0x151515, ink: 0xEDE8DD, grain: 0.07)
-let tintPal = Palette(paper: nil, ink: 0xFFFFFF, grain: 0)
+// Bezel geometry
+let ringR: CGFloat = 300
+let ringW: CGFloat = 26
 
-let fontName = "ArchivoBlack-Regular" as CFString
-let fontSize: CGFloat = 240
-let puff: CGFloat = 16            // outline stroke width that rounds and fattens the letters
-let tracking: CGFloat = 22
-let lineGap: CGFloat = 44
-// Per-letter tilt (degrees) and nudge, so it looks hand-set rather than typed.
-let tilts: [CGFloat] = [-4, 3, -2, 3, -3, 4, -2]
-let nudges: [CGFloat] = [6, -8, 4, -6, 8, -4, 6]
-
-struct Letter { let path: CGPath; let width: CGFloat }
-
-func letters(_ text: String, font: CTFont) -> [Letter] {
-    text.map { ch in
-        var u = Array(String(ch).utf16)
-        var g = [CGGlyph](repeating: 0, count: u.count)
-        CTFontGetGlyphsForCharacters(font, &u, &g, u.count)
-        var adv = CGSize.zero
-        CTFontGetAdvancesForGlyphs(font, .horizontal, &g, &adv, 1)
-        return Letter(path: CTFontCreatePathForGlyph(font, g[0], nil)!, width: adv.width)
+/// The wave mark as a clip mask: white where the logo has ink, black elsewhere.
+func inkMask(_ url: URL) -> CGImage {
+    let src = CGImageSourceCreateWithURL(url as CFURL, nil)!
+    let img = CGImageSourceCreateImageAtIndex(src, 0, nil)!
+    let w = img.width, h = img.height
+    var px = [UInt8](repeating: 0, count: w * h * 4)
+    let ctx = CGContext(data: &px, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
+                        space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    ctx.setFillColor(rgb(0xFFFFFF)); ctx.fill(CGRect(x: 0, y: 0, width: w, height: h))   // flatten onto white
+    ctx.draw(img, in: CGRect(x: 0, y: 0, width: w, height: h))
+    var m = [UInt8](repeating: 0, count: w * h)
+    for i in 0..<(w * h) {
+        let lum = (Int(px[i*4]) * 299 + Int(px[i*4+1]) * 587 + Int(px[i*4+2]) * 114) / 1000
+        m[i] = UInt8(255 - lum)
     }
+    let g = CGContext(data: &m, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w,
+                      space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)!
+    return g.makeImage()!
 }
+
+let markURL = URL(fileURLWithPath: "design/icon/offshore-wave-mark.png")
+let mask = inkMask(markURL)
 
 func render(_ pal: Palette, to url: URL) {
-    let space = CGColorSpace(name: CGColorSpace.sRGB)!
     let ctx = CGContext(data: nil, width: Int(S), height: Int(S), bitsPerComponent: 8, bytesPerRow: 0,
                         space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    // CoreGraphics' native bottom-left origin matches glyph paths, so no flip here.
-    if let paper = pal.paper {
-        ctx.setFillColor(rgb(paper)); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S))
+    ctx.translateBy(x: 0, y: S); ctx.scaleBy(x: 1, y: -1)
+    if let top = pal.bgTop, let bottom = pal.bgBottom {
+        let g = CGGradient(colorsSpace: space, colors: [rgb(top), rgb(bottom)] as CFArray, locations: [0, 1])!
+        ctx.drawLinearGradient(g, start: .zero, end: CGPoint(x: 0, y: S), options: [])
     }
-
-    let font = CTFontCreateWithName(fontName, fontSize, nil)
-    let capH = CTFontGetCapHeight(font)
-    let lines = ["DUE", "EAST"].map { letters($0, font: font) }
-    let blockH = capH * 2 + lineGap + puff
-    var baseline = S / 2 + blockH / 2 - capH - puff / 2   // top line's baseline
-
-    ctx.setFillColor(rgb(pal.ink))
-    ctx.setStrokeColor(rgb(pal.ink))
-    ctx.setLineWidth(puff)
-    ctx.setLineJoin(.round)
     ctx.setLineCap(.round)
 
-    var k = 0
-    for line in lines {
-        let width = line.reduce(0) { $0 + $1.width } + tracking * CGFloat(line.count - 1)
-        var x = (S - width) / 2
-        for l in line {
-            let box = l.path.boundingBox
-            var t = CGAffineTransform(translationX: x + box.midX, y: baseline + box.midY + nudges[k])
-                .rotated(by: tilts[k] * .pi / 180)
-                .translatedBy(x: -box.midX, y: -box.midY)
-            let p = l.path.copy(using: &t)!
-            ctx.addPath(p); ctx.fillPath()
-            ctx.addPath(p); ctx.strokePath()
-            x += l.width + tracking
-            k += 1
-        }
-        baseline -= capH + lineGap + puff / 2
+    // Ring.
+    ctx.setStrokeColor(rgb(pal.line)); ctx.setLineWidth(ringW)
+    ctx.addEllipse(in: CGRect(x: C.x - ringR, y: C.y - ringR, width: ringR * 2, height: ringR * 2))
+    ctx.strokePath()
+
+    // Dashes around the outside of the ring, every 15°: long at N/S/W, medium on the diagonals, short between.
+    let r0 = ringR + ringW / 2 + 26
+    for i in 0..<24 {
+        let d = CGFloat(i) * 15
+        if d == 90 { continue }                     // east gets the green heading dash
+        let cardinal = i % 6 == 0, diagonal = i % 3 == 0
+        let len: CGFloat = cardinal ? 56 : (diagonal ? 38 : 24)
+        ctx.setLineWidth(cardinal ? 22 : (diagonal ? 16 : 12))
+        ctx.setStrokeColor(rgb(pal.line, cardinal ? 1 : (diagonal ? 0.85 : 0.55)))
+        ctx.move(to: polar(d, r0)); ctx.addLine(to: polar(d, r0 + len)); ctx.strokePath()
     }
 
-    // Screen-print grain: specks of paper in the ink and ink on the paper.
-    if pal.grain > 0, let paper = pal.paper {
-        var seed: UInt64 = 7
-        func next() -> CGFloat { seed = seed &* 6364136223846793005 &+ 1442695040888963407; return CGFloat(seed >> 33) / CGFloat(1 << 31) }
-        for _ in 0..<30000 {
-            let x = next() * S, y = next() * S, r = 0.8 + next() * 2.0
-            ctx.setFillColor(next() < 0.6 ? rgb(paper, pal.grain * 2.2) : rgb(pal.ink, pal.grain))
-            ctx.fillEllipse(in: CGRect(x: x, y: y, width: r, height: r))
-        }
+    // Heading dash at due east, crossing the ring so it reads as the lubber line.
+    let a = polar(90, ringR - 34), b = polar(90, r0 + 70)
+    if pal.glow {
+        let mid = polar(90, (ringR - 34 + r0 + 70) / 2)
+        let halo = CGGradient(colorsSpace: space, colors: [rgb(pal.heading, 0.45), rgb(pal.heading, 0)] as CFArray, locations: [0, 1])!
+        ctx.drawRadialGradient(halo, startCenter: mid, startRadius: 0, endCenter: mid, endRadius: 150, options: [])
     }
+    ctx.setStrokeColor(rgb(pal.heading)); ctx.setLineWidth(30)
+    ctx.move(to: a); ctx.addLine(to: b); ctx.strokePath()
+
+    // The Offshore Films wave in the middle.
+    let width: CGFloat = 430
+    let h = width * CGFloat(mask.height) / CGFloat(mask.width)
+    let rect = CGRect(x: C.x - width / 2 - 6, y: C.y - h / 2 + 8, width: width, height: h)
+    ctx.saveGState()
+    ctx.translateBy(x: 0, y: rect.minY + rect.maxY); ctx.scaleBy(x: 1, y: -1)   // un-flip for the mask
+    ctx.clip(to: rect, mask: mask)
+    ctx.setFillColor(rgb(pal.line)); ctx.fill(rect)
+    ctx.restoreGState()
 
     let img = ctx.makeImage()!
     let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil)!

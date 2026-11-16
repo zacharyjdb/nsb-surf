@@ -33,3 +33,10 @@ Supersedes the wave-arrow icon. Reference only: this is a real brand's artwork (
 
 - `due-east-jaws-hat.png`, `due-east-inlet-tooth.png`
 - Black ink on off-white, screen-print grain, a shark tooth or jaws motif, and chunky 70s-style bubble lettering.
+
+## Compass-bearing direction (2026-11-16)
+
+The icon has no letters; the app is still named DUE EAST. The heading points east (090°).
+
+- `compass-rounded-arcs.png`, `compass-dial-light.png`, `compass-dial-navy.png`
+- White on soft blue (powder ~#8FB2DA, slate ~#93A3B5, navy ~#33456B): tick-mark dials, a heading marker and rounded concentric arcs.
