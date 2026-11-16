@@ -40,3 +40,11 @@ The icon has no letters; the app is still named DUE EAST. The heading points eas
 
 - `compass-rounded-arcs.png`, `compass-dial-light.png`, `compass-dial-navy.png`
 - White on soft blue (powder ~#8FB2DA, slate ~#93A3B5, navy ~#33456B): tick-mark dials, a heading marker and rounded concentric arcs.
+
+## Bold flat marks (2026-11-16, later)
+
+Replaces the compass-bezel icon direction.
+
+- `mark-wave-panel*.png`, `mark-banded-block.png`, `mark-brush-waves.png`, `mark-sunrise-stripes.png`
+- Single-color marks: cream on deep earthy grounds (oxblood, olive) or black on cream.
+- Organic, slightly rough linework: flowing wave contours, wavy cuts through a block, brush strokes, and a sunrise over a striped sea.

@@ -1,14 +1,14 @@
 // Renders the DUE EAST app icon (light, dark and tinted variants) at 1024x1024.
-// The mark: the Offshore Films wave (offshore-wave-mark.png, no text) inside a compass bezel,
-// with dashes around the ring and a green heading dash at due east (090°).
-// Run: swift design/icon/make_icon.swift <output dir>   (run from the repo root)
+// The mark ("Swell panel"): a framed window onto a rolling swell with flowing contour lines,
+// and a sun ring rising in the east (upper right). One ink color on paper
+// (mood from design/inspo/mark-*.png; an original drawing).
+// Run: swift design/icon/make_icon.swift <output dir>
 import CoreGraphics
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
 let S: CGFloat = 1024
-let C = CGPoint(x: S / 2, y: S / 2)
 let space = CGColorSpace(name: CGColorSpace.sRGB)!
 
 func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
@@ -17,93 +17,68 @@ func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
 }
 
 struct Palette {
-    var bgTop: UInt32?, bgBottom: UInt32?   // nil = transparent (tinted)
-    var line: UInt32                        // ring, dashes and wave
-    var heading: UInt32                     // the east dash
-    var glow: Bool
+    var paper: UInt32?   // nil = transparent (tinted)
+    var ink: UInt32
 }
-let lightPal = Palette(bgTop: 0x34507E, bgBottom: 0x223962, line: 0xFFFFFF, heading: 0x2FD18A, glow: true)
-let darkPal = Palette(bgTop: 0x1E3254, bgBottom: 0x111F3A, line: 0xEAF0F8, heading: 0x2FD18A, glow: true)
-let tintPal = Palette(bgTop: nil, bgBottom: nil, line: 0xFFFFFF, heading: 0xFFFFFF, glow: false)
+let lightPal = Palette(paper: 0xECEAE4, ink: 0x171717)
+let darkPal = Palette(paper: 0x171717, ink: 0xECE6D8)
+let tintPal = Palette(paper: nil, ink: 0xFFFFFF)
 
-/// Compass bearing (0 = north, 90 = east, clockwise) at radius r, top-left coordinates.
-func polar(_ deg: CGFloat, _ r: CGFloat) -> CGPoint {
-    let a = deg * .pi / 180
-    return CGPoint(x: C.x + r * sin(a), y: C.y - r * cos(a))
-}
+let frame = CGRect(x: 214, y: 176, width: 596, height: 672)
 
-// Bezel geometry
-let ringR: CGFloat = 300
-let ringW: CGFloat = 26
-
-/// The wave mark as a clip mask: white where the logo has ink, black elsewhere.
-func inkMask(_ url: URL) -> CGImage {
-    let src = CGImageSourceCreateWithURL(url as CFURL, nil)!
-    let img = CGImageSourceCreateImageAtIndex(src, 0, nil)!
-    let w = img.width, h = img.height
-    var px = [UInt8](repeating: 0, count: w * h * 4)
-    let ctx = CGContext(data: &px, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
-                        space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    ctx.setFillColor(rgb(0xFFFFFF)); ctx.fill(CGRect(x: 0, y: 0, width: w, height: h))   // flatten onto white
-    ctx.draw(img, in: CGRect(x: 0, y: 0, width: w, height: h))
-    var m = [UInt8](repeating: 0, count: w * h)
-    for i in 0..<(w * h) {
-        let lum = (Int(px[i*4]) * 299 + Int(px[i*4+1]) * 587 + Int(px[i*4+2]) * 114) / 1000
-        m[i] = UInt8(255 - lum)
-    }
-    let g = CGContext(data: &m, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w,
-                      space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)!
-    return g.makeImage()!
+/// Height of the swell's surface at x: one big crest left of center plus a smaller rolling sea.
+func surface(_ x: CGFloat) -> CGFloat {
+    let u = (x - frame.minX) / frame.width
+    return 560 - 120 * exp(-pow((u - 0.34) / 0.2, 2)) + 26 * sin(u * 9)
 }
 
-let markURL = URL(fileURLWithPath: "design/icon/offshore-wave-mark.png")
-let mask = inkMask(markURL)
+/// Contour line k below the surface: follows the swell, flattening and drifting east with depth.
+func contour(_ k: Int, _ x: CGFloat) -> CGFloat {
+    let u = (x - frame.minX) / frame.width
+    let off = CGFloat(k) * 54, flat = 1 - CGFloat(k) * 0.18
+    return 560 + off - flat * (120 * exp(-pow((u - 0.34 - CGFloat(k) * 0.05) / 0.22, 2)) - 26 * sin(u * 9 + CGFloat(k) * 0.6))
+}
 
 func render(_ pal: Palette, to url: URL) {
     let ctx = CGContext(data: nil, width: Int(S), height: Int(S), bitsPerComponent: 8, bytesPerRow: 0,
                         space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
     ctx.translateBy(x: 0, y: S); ctx.scaleBy(x: 1, y: -1)
-    if let top = pal.bgTop, let bottom = pal.bgBottom {
-        let g = CGGradient(colorsSpace: space, colors: [rgb(top), rgb(bottom)] as CFArray, locations: [0, 1])!
-        ctx.drawLinearGradient(g, start: .zero, end: CGPoint(x: 0, y: S), options: [])
-    }
-    ctx.setLineCap(.round)
+    if let paper = pal.paper { ctx.setFillColor(rgb(paper)); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S)) }
+    ctx.setLineCap(.round); ctx.setLineJoin(.round)
+    let ink = rgb(pal.ink)
 
-    // Ring.
-    ctx.setStrokeColor(rgb(pal.line)); ctx.setLineWidth(ringW)
-    ctx.addEllipse(in: CGRect(x: C.x - ringR, y: C.y - ringR, width: ringR * 2, height: ringR * 2))
-    ctx.strokePath()
+    // Frame
+    ctx.setStrokeColor(ink); ctx.setLineWidth(22)
+    ctx.addPath(CGPath(roundedRect: frame, cornerWidth: 26, cornerHeight: 26, transform: nil)); ctx.strokePath()
 
-    // Dashes around the outside of the ring, every 15°: long at N/S/W, medium on the diagonals, short between.
-    let r0 = ringR + ringW / 2 + 26
-    for i in 0..<24 {
-        let d = CGFloat(i) * 15
-        if d == 90 { continue }                     // east gets the green heading dash
-        let cardinal = i % 6 == 0, diagonal = i % 3 == 0
-        let len: CGFloat = cardinal ? 56 : (diagonal ? 38 : 24)
-        ctx.setLineWidth(cardinal ? 22 : (diagonal ? 16 : 12))
-        ctx.setStrokeColor(rgb(pal.line, cardinal ? 1 : (diagonal ? 0.85 : 0.55)))
-        ctx.move(to: polar(d, r0)); ctx.addLine(to: polar(d, r0 + len)); ctx.strokePath()
-    }
+    // Sun ring, east
+    ctx.setLineWidth(20)
+    ctx.addEllipse(in: CGRect(x: 640, y: 262, width: 92, height: 92)); ctx.strokePath()
 
-    // Heading dash at due east, crossing the ring so it reads as the lubber line.
-    let a = polar(90, ringR - 34), b = polar(90, r0 + 70)
-    if pal.glow {
-        let mid = polar(90, (ringR - 34 + r0 + 70) / 2)
-        let halo = CGGradient(colorsSpace: space, colors: [rgb(pal.heading, 0.45), rgb(pal.heading, 0)] as CFArray, locations: [0, 1])!
-        ctx.drawRadialGradient(halo, startCenter: mid, startRadius: 0, endCenter: mid, endRadius: 150, options: [])
-    }
-    ctx.setStrokeColor(rgb(pal.heading)); ctx.setLineWidth(30)
-    ctx.move(to: a); ctx.addLine(to: b); ctx.strokePath()
-
-    // The Offshore Films wave in the middle.
-    let width: CGFloat = 430
-    let h = width * CGFloat(mask.height) / CGFloat(mask.width)
-    let rect = CGRect(x: C.x - width / 2 - 6, y: C.y - h / 2 + 8, width: width, height: h)
+    // Swell body, clipped to the inside of the frame
     ctx.saveGState()
-    ctx.translateBy(x: 0, y: rect.minY + rect.maxY); ctx.scaleBy(x: 1, y: -1)   // un-flip for the mask
-    ctx.clip(to: rect, mask: mask)
-    ctx.setFillColor(rgb(pal.line)); ctx.fill(rect)
+    // inset a little less than half the frame stroke, so the fill tucks under the frame line
+    ctx.addPath(CGPath(roundedRect: frame.insetBy(dx: 6, dy: 6), cornerWidth: 20, cornerHeight: 20, transform: nil))
+    ctx.clip()
+    let body = CGMutablePath()
+    var x = frame.minX
+    body.move(to: CGPoint(x: x, y: surface(x)))
+    while x < frame.maxX { x += 4; body.addLine(to: CGPoint(x: x, y: surface(x))) }
+    body.addLine(to: CGPoint(x: frame.maxX, y: frame.maxY))
+    body.addLine(to: CGPoint(x: frame.minX, y: frame.maxY))
+    body.closeSubpath()
+    ctx.setFillColor(ink); ctx.addPath(body); ctx.fillPath()
+
+    // Contour lines cut out of the swell (paper color, or clear for the tinted version)
+    if pal.paper == nil { ctx.setBlendMode(.clear) }
+    ctx.setStrokeColor(pal.paper.map { rgb($0) } ?? rgb(0x000000)); ctx.setLineWidth(13)
+    for k in 1...4 {
+        let p = CGMutablePath()
+        var x = frame.minX - 10
+        p.move(to: CGPoint(x: x, y: contour(k, x)))
+        while x < frame.maxX + 10 { x += 4; p.addLine(to: CGPoint(x: x, y: contour(k, x))) }
+        ctx.addPath(p); ctx.strokePath()
+    }
     ctx.restoreGState()
 
     let img = ctx.makeImage()!
