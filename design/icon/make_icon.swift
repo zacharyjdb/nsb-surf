@@ -1,8 +1,10 @@
 // Renders the DUE EAST app icon (light, dark and tinted variants) at 1024x1024.
-// The mark: an original, hand-inked shark tooth in a screen-print style, black on off-white
-// with grain (mood from design/inspo/due-east-*.png; not a copy of that artwork).
+// The mark: "DUE" stacked over "EAST" in puffy, slightly wonky 70s-style lettering,
+// black ink on off-white with screen-print grain (mood from design/inspo/due-east-*.png).
+// The puffiness comes from stroking a heavy font's outlines with thick round joins.
 // Run: swift design/icon/make_icon.swift <output dir>
 import CoreGraphics
+import CoreText
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers
@@ -24,106 +26,66 @@ let lightPal = Palette(paper: 0xF1EEE7, ink: 0x161616, grain: 0.08)
 let darkPal = Palette(paper: 0x151515, ink: 0xEDE8DD, grain: 0.07)
 let tintPal = Palette(paper: nil, ink: 0xFFFFFF, grain: 0)
 
-// MARK: geometry helpers
+let fontName = "ArchivoBlack-Regular" as CFString
+let fontSize: CGFloat = 240
+let puff: CGFloat = 16            // outline stroke width that rounds and fattens the letters
+let tracking: CGFloat = 22
+let lineGap: CGFloat = 44
+// Per-letter tilt (degrees) and nudge, so it looks hand-set rather than typed.
+let tilts: [CGFloat] = [-4, 3, -2, 3, -3, 4, -2]
+let nudges: [CGFloat] = [6, -8, 4, -6, 8, -4, 6]
 
-func cubic(_ p0: CGPoint, _ c1: CGPoint, _ c2: CGPoint, _ p1: CGPoint, _ t: CGFloat) -> CGPoint {
-    let u = 1 - t
-    return CGPoint(x: u*u*u*p0.x + 3*u*u*t*c1.x + 3*u*t*t*c2.x + t*t*t*p1.x,
-                   y: u*u*u*p0.y + 3*u*u*t*c1.y + 3*u*t*t*c2.y + t*t*t*p1.y)
-}
+struct Letter { let path: CGPath; let width: CGFloat }
 
-/// Points along a cubic, with a small saw-tooth pushed outward to suggest serrations.
-/// `outward` is the side (+1/-1) of the travel direction that faces away from the tooth.
-func serrated(_ p0: CGPoint, _ c1: CGPoint, _ c2: CGPoint, _ p1: CGPoint, outward: CGFloat,
-              depth: CGFloat = 7, pitch: CGFloat = 16) -> [CGPoint] {
-    var pts: [CGPoint] = []
-    let steps = 400
-    var travelled: CGFloat = 0
-    var last = p0
-    for i in 0...steps {
-        let t = CGFloat(i) / CGFloat(steps)
-        let p = cubic(p0, c1, c2, p1, t)
-        let dx = p.x - last.x, dy = p.y - last.y
-        let len = max(sqrt(dx*dx + dy*dy), 0.0001)
-        travelled += len
-        // Saw wave: rises over one pitch, drops sharply. Fades out near both ends.
-        let phase = travelled.truncatingRemainder(dividingBy: pitch) / pitch
-        let fade = min(t / 0.12, (1 - t) / 0.08, 1)
-        let off = depth * phase * max(fade, 0)
-        let nx = -dy / len * outward, ny = dx / len * outward
-        pts.append(CGPoint(x: p.x + nx * off, y: p.y + ny * off))
-        last = p
+func letters(_ text: String, font: CTFont) -> [Letter] {
+    text.map { ch in
+        var u = Array(String(ch).utf16)
+        var g = [CGGlyph](repeating: 0, count: u.count)
+        CTFontGetGlyphsForCharacters(font, &u, &g, u.count)
+        var adv = CGSize.zero
+        CTFontGetAdvancesForGlyphs(font, .horizontal, &g, &adv, 1)
+        return Letter(path: CTFontCreatePathForGlyph(font, g[0], nil)!, width: adv.width)
     }
-    return pts
-}
-
-// MARK: the tooth (top-left coordinates)
-
-/// The root: two rounded lobes with a notch in the middle, sitting on a flat base.
-func rootPath() -> CGPath {
-    let p = CGMutablePath()
-    p.move(to: CGPoint(x: 206, y: 418))
-    p.addCurve(to: CGPoint(x: 330, y: 268), control1: CGPoint(x: 196, y: 330), control2: CGPoint(x: 250, y: 272))
-    p.addCurve(to: CGPoint(x: 512, y: 352), control1: CGPoint(x: 420, y: 262), control2: CGPoint(x: 480, y: 300))
-    p.addCurve(to: CGPoint(x: 700, y: 262), control1: CGPoint(x: 548, y: 296), control2: CGPoint(x: 610, y: 256))
-    p.addCurve(to: CGPoint(x: 820, y: 408), control1: CGPoint(x: 780, y: 268), control2: CGPoint(x: 830, y: 320))
-    p.addCurve(to: CGPoint(x: 206, y: 418), control1: CGPoint(x: 640, y: 440), control2: CGPoint(x: 390, y: 446))
-    p.closeSubpath()
-    return p
-}
-
-/// The blade: narrower than the root, tall, with a tip that hooks east.
-func bladePath() -> CGPath {
-    let topL = CGPoint(x: 296, y: 460), topR = CGPoint(x: 732, y: 452)
-    let tip = CGPoint(x: 608, y: 900)
-    // left edge: full shoulder, then a long concave sweep into the hooked tip
-    let left = serrated(topL, CGPoint(x: 380, y: 590), CGPoint(x: 520, y: 740), tip, outward: 1)
-    // right edge from the tip back up: short and nearly straight
-    let right = serrated(tip, CGPoint(x: 650, y: 790), CGPoint(x: 712, y: 620), topR, outward: 1)
-    let p = CGMutablePath()
-    p.addLines(between: left + right)
-    p.addCurve(to: topL, control1: CGPoint(x: 600, y: 484), control2: CGPoint(x: 430, y: 488))
-    p.closeSubpath()
-    return p
 }
 
 func render(_ pal: Palette, to url: URL) {
     let space = CGColorSpace(name: CGColorSpace.sRGB)!
     let ctx = CGContext(data: nil, width: Int(S), height: Int(S), bitsPerComponent: 8, bytesPerRow: 0,
                         space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    ctx.translateBy(x: 0, y: S)
-    ctx.scaleBy(x: 1, y: -1)
-
+    // CoreGraphics' native bottom-left origin matches glyph paths, so no flip here.
     if let paper = pal.paper {
         ctx.setFillColor(rgb(paper)); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S))
     }
 
-    ctx.setFillColor(rgb(pal.ink))
-    ctx.addPath(rootPath()); ctx.fillPath()
-    ctx.addPath(bladePath()); ctx.fillPath()
+    let font = CTFontCreateWithName(fontName, fontSize, nil)
+    let capH = CTFontGetCapHeight(font)
+    let lines = ["DUE", "EAST"].map { letters($0, font: font) }
+    let blockH = capH * 2 + lineGap + puff
+    var baseline = S / 2 + blockH / 2 - capH - puff / 2   // top line's baseline
 
-    // Engraved highlights cut out of the ink: a sweep down the blade and a few hatch lines on the root.
-    let cut = pal.paper.map { rgb($0) } ?? rgb(0x000000, 0)
-    if pal.paper == nil { ctx.setBlendMode(.clear) }
-    ctx.setStrokeColor(cut)
+    ctx.setFillColor(rgb(pal.ink))
+    ctx.setStrokeColor(rgb(pal.ink))
+    ctx.setLineWidth(puff)
+    ctx.setLineJoin(.round)
     ctx.setLineCap(.round)
-    ctx.setLineWidth(16)
-    let sweep = CGMutablePath()
-    sweep.move(to: CGPoint(x: 572, y: 540))
-    sweep.addCurve(to: CGPoint(x: 606, y: 830), control1: CGPoint(x: 612, y: 630), control2: CGPoint(x: 622, y: 740))
-    ctx.addPath(sweep); ctx.strokePath()
-    ctx.setLineWidth(9)
-    let sweep2 = CGMutablePath()
-    sweep2.move(to: CGPoint(x: 648, y: 540))
-    sweep2.addCurve(to: CGPoint(x: 662, y: 690), control1: CGPoint(x: 668, y: 590), control2: CGPoint(x: 672, y: 640))
-    ctx.addPath(sweep2); ctx.strokePath()
-    ctx.setLineWidth(7)
-    for (i, x) in stride(from: 268.0, through: 740.0, by: 40.0).enumerated() {
-        let y0: CGFloat = (i % 2 == 0 ? 368 : 378) + (abs(CGFloat(i) - 6) < 2 ? 14 : 0)
-        ctx.move(to: CGPoint(x: x, y: y0)); ctx.addLine(to: CGPoint(x: x + 14, y: y0 + 34))
+
+    var k = 0
+    for line in lines {
+        let width = line.reduce(0) { $0 + $1.width } + tracking * CGFloat(line.count - 1)
+        var x = (S - width) / 2
+        for l in line {
+            let box = l.path.boundingBox
+            var t = CGAffineTransform(translationX: x + box.midX, y: baseline + box.midY + nudges[k])
+                .rotated(by: tilts[k] * .pi / 180)
+                .translatedBy(x: -box.midX, y: -box.midY)
+            let p = l.path.copy(using: &t)!
+            ctx.addPath(p); ctx.fillPath()
+            ctx.addPath(p); ctx.strokePath()
+            x += l.width + tracking
+            k += 1
+        }
+        baseline -= capH + lineGap + puff / 2
     }
-    ctx.strokePath()
-    ctx.setBlendMode(.normal)
 
     // Screen-print grain: specks of paper in the ink and ink on the paper.
     if pal.grain > 0, let paper = pal.paper {
