@@ -26,3 +26,10 @@ Replaces the cream print style above for the icon.
 - `logo-dashed-wave-flag.png`, `logo-three-waves-on-water.png`, `logo-mountain-sea-blocks.png`, `logo-new-wave.png`
 - Clean, geometric brand marks: stacked rounded wave strokes, some broken into dashes.
 - Royal blue (~#2457E6), sky blue (~#4FB6E6), navy (~#15305A), white or pale-blue ground.
+
+## Shark-tooth direction (2026-11-16)
+
+Supersedes the wave-arrow icon. Reference only: this is a real brand's artwork (Griffins Brand "Due East"), so take the mood and don't copy it.
+
+- `due-east-jaws-hat.png`, `due-east-inlet-tooth.png`
+- Black ink on off-white, screen-print grain, a shark tooth or jaws motif, and chunky 70s-style bubble lettering.
