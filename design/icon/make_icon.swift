@@ -40,8 +40,10 @@ func contour(_ k: Int, _ x: CGFloat) -> CGFloat {
 }
 
 func render(_ pal: Palette, to url: URL) {
+    // App Store icons must have no alpha channel; only the tinted variant keeps transparency.
+    let alpha: CGImageAlphaInfo = pal.paper == nil ? .premultipliedLast : .noneSkipLast
     let ctx = CGContext(data: nil, width: Int(S), height: Int(S), bitsPerComponent: 8, bytesPerRow: 0,
-                        space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+                        space: space, bitmapInfo: alpha.rawValue)!
     ctx.translateBy(x: 0, y: S); ctx.scaleBy(x: 1, y: -1)
     if let paper = pal.paper { ctx.setFillColor(rgb(paper)); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S)) }
     ctx.setLineCap(.round); ctx.setLineJoin(.round)
