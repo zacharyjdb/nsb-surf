@@ -1,15 +1,20 @@
 import SwiftUI
 
 enum Theme {
-    // Light, all-blue palette: cool white-blue background, white cards, one bright ocean blue, navy text.
-    static let bg = Color(hex: 0xF1F5FB)          // cool white-blue
-    static let card = Color.white
-    static let cardRaised = Color(hex: 0xE7F0FD)  // pale blue chip
-    static let divider = Color(hex: 0xE3E9F2)
-    static let text = Color(hex: 0x0F1E3A)        // navy
-    static let secondary = Color(hex: 0x6B7A90)   // blue-gray
-    static let accent = Color(hex: 0x2F7CF6)      // bright ocean blue
-    static let shadow = Color(hex: 0x1B3A6B).opacity(0.07)
+    // Ocean blue and white: a blue gradient backdrop, white text, see-through lighter-blue cards,
+    // and an aqua accent (tide lines, links).
+    static let bgTop: UInt32 = 0x3A79B8, bgBottom: UInt32 = 0x1B3F6B
+    static let bg = Color(hex: bgTop)             // solid stand-in (nav bar)
+    static let backdrop = LinearGradient(colors: [Color(hex: bgTop), Color(hex: bgBottom)],
+                                         startPoint: .top, endPoint: .bottom)
+    static let card = Color.white.opacity(0.11)
+    static let cardRaised = Color.white.opacity(0.18)
+    static let divider = Color.white.opacity(0.14)
+    static let text = Color.white
+    static let secondary = Color(hex: 0xBFD3EA)   // pale blue-white
+    static let accent = Color(hex: 0x8BE3F5)      // aqua
+    static let ink = Color(hex: 0x10274A)         // deep navy, for text on light chips
+    static let shadow = Color.black.opacity(0.14)
 
     /// 0 Flat … 5 Epic. The one place the blue theme gives way: bad is red/amber, fair is yellow, good is green.
     static func rating(_ stars: Int) -> Color {
@@ -25,7 +30,7 @@ enum Theme {
 
     /// Text color that reads on top of a rating color.
     static func onRating(_ stars: Int) -> Color {
-        (stars == 2 || stars == 3 || stars <= 0) ? text : .white
+        (stars == 2 || stars == 3 || stars <= 0) ? ink : .white
     }
 
     /// Good and epic surf glows; everything else sits flat.
@@ -61,14 +66,14 @@ enum Theme {
 
     static func windSpeed(_ mph: Int?) -> Color { windSpeed(mph.map(Double.init)) }
 
-    /// The same ramp, darkened a touch so it reads as text on white.
+    /// The same ramp, lightened a touch so it reads as text on the blue backdrop.
     static func windSpeedText(_ mph: Int?) -> Color {
         let v = Double(max(0, mph ?? 0))
         let stops = windStops
         let hi = stops.firstIndex(where: { $0.mph >= v }) ?? stops.count - 1
         let lo = max(0, hi - 1)
         let t = hi == lo ? 0 : min(1, (v - stops[lo].mph) / (stops[hi].mph - stops[lo].mph))
-        return Color(mix: stops[lo].hex, stops[hi].hex, t, darken: 0.22)
+        return Color(mix: stops[lo].hex, stops[hi].hex, t, lighten: 0.45)
     }
 
     static func windName(_ kind: String) -> String {
@@ -85,14 +90,15 @@ enum Theme {
 }
 
 extension Color {
-    /// Linear blend of two hex colors, optionally darkened toward black.
-    init(mix a: UInt32, _ b: UInt32, _ t: Double, darken: Double = 0) {
+    /// Linear blend of two hex colors, optionally lightened toward white.
+    init(mix a: UInt32, _ b: UInt32, _ t: Double, lighten: Double = 0) {
         func ch(_ h: UInt32, _ shift: UInt32) -> Double { Double((h >> shift) & 0xFF) / 255 }
-        let k = max(0, min(1, t)), d = 1 - darken
-        self.init(.sRGB,
-                  red: (ch(a, 16) + (ch(b, 16) - ch(a, 16)) * k) * d,
-                  green: (ch(a, 8) + (ch(b, 8) - ch(a, 8)) * k) * d,
-                  blue: (ch(a, 0) + (ch(b, 0) - ch(a, 0)) * k) * d)
+        let k = max(0, min(1, t))
+        func c(_ shift: UInt32) -> Double {
+            let v = ch(a, shift) + (ch(b, shift) - ch(a, shift)) * k
+            return v + (1 - v) * lighten
+        }
+        self.init(.sRGB, red: c(16), green: c(8), blue: c(0))
     }
 
     init(hex: UInt32) {
@@ -125,7 +131,7 @@ struct RatingPill: View {
     let stars: Int
     var body: some View {
         Text(Theme.ratingName(stars).uppercased())
-            .font(.system(size: 11, weight: .heavy))
+            .font(.ui(11, .heavy))
             .tracking(0.6)
             .foregroundStyle(Theme.onRating(stars))
             .padding(.horizontal, 8).padding(.vertical, 4)
@@ -141,7 +147,7 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             if let title {
                 Text(title.uppercased())
-                    .font(.system(size: 12, weight: .heavy))
+                    .font(.ui(12, .heavy))
                     .tracking(1)
                     .foregroundStyle(Theme.secondary)
             }
@@ -204,8 +210,39 @@ struct WindSpeedLegend: View {
                     if v != 34 { Spacer() }
                 }
             }
-            .font(.system(size: 9, weight: .semibold))
+            .font(.ui(9, .semibold))
             .foregroundStyle(Theme.secondary)
         }
     }
+}
+
+// MARK: - Type
+
+extension Font {
+    /// The app's type: squared-off DIN for anything bold, the system font for plain text.
+    /// Black and big heavy text (headlines, hero numbers) use DIN Condensed, scaled up since it runs narrow;
+    /// small heavy labels and bold values use DIN Alternate. Both ship with iOS.
+    /// Surf numbers: heavy, blocky and tight (SF Pro Black, condensed width), with chunky digits.
+    static func num(_ size: CGFloat) -> Font {
+        .system(size: size, weight: .black).width(.condensed)
+    }
+
+    static func ui(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        switch weight {
+        case .black:
+            return .custom("DINCondensed-Bold", fixedSize: size * 1.25)
+        case .heavy where size >= 18:
+            return .custom("DINCondensed-Bold", fixedSize: size * 1.25)
+        case .heavy, .bold:
+            return .custom("DINAlternate-Bold", fixedSize: size)
+        default:
+            return .system(size: size, weight: weight)
+        }
+    }
+}
+
+extension String {
+    /// A surf range with a short hyphen instead of the long en dash ("4-8" not "4–8"), so the
+    /// numbers carry the weight. Number displays only; prose keeps proper punctuation.
+    var shortDash: String { replacingOccurrences(of: "–", with: "-") }
 }

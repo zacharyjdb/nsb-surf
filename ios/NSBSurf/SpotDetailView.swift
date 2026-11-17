@@ -37,7 +37,7 @@ struct SpotDetailView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 32)
             }
-            .background(Theme.bg.ignoresSafeArea())
+            .background(Theme.backdrop.ignoresSafeArea())
             .navigationTitle(spot.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Theme.bg, for: .navigationBar)
@@ -66,10 +66,11 @@ struct NowHeader: View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(spot.subtitle.uppercased())
-                    .font(.system(size: 12, weight: .heavy)).tracking(1).foregroundStyle(Theme.secondary)
+                    .font(.ui(12, .heavy)).tracking(1).foregroundStyle(Theme.secondary)
+                    .padding(.bottom, 4)
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(h?.surfLabel ?? "–").font(.system(size: 64, weight: .heavy))
-                    Text("ft").font(.system(size: 24, weight: .bold))
+                    Text((h?.surfLabel ?? "–").shortDash).font(.num(80))
+                    Text("ft").font(.ui(24, .bold))
                     Spacer()
                     RatingPill(stars: h?.stars ?? 0)
                 }
@@ -109,10 +110,10 @@ struct NowHeader: View {
 
     private func stat<C: View>(_ title: String, @ViewBuilder _ c: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.system(size: 11, weight: .heavy)).tracking(0.8).foregroundStyle(Theme.secondary)
+            Text(title).font(.ui(11, .heavy)).tracking(0.8).foregroundStyle(Theme.secondary)
             c()
         }
-        .font(.system(size: 15, weight: .bold))
+        .font(.ui(15, .bold))
         .foregroundStyle(Theme.text)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -135,17 +136,17 @@ struct DayPicker: View {
                     Button { onSelect(d.date) } label: {
                         VStack(spacing: 6) {
                             Text(LocalTime.format(d.day, "EEE").uppercased())
-                                .font(.system(size: 11, weight: .heavy))
+                                .font(.ui(11, .heavy))
                             Text(LocalTime.format(d.day, "d"))
-                                .font(.system(size: 18, weight: .heavy))
+                                .font(.num(24))
                             RoundedRectangle(cornerRadius: 2).fill(Theme.rating(d.stars)).frame(height: 4).glow(d.stars)
-                            Text(d.surfLabel).font(.system(size: 12, weight: .bold))
+                            Text(d.surfLabel.shortDash).font(.num(15))
                             if let spot { WindTrio(hours: spot.hours(on: d), onDark: isSel) }
                         }
-                        .foregroundStyle(isSel ? Theme.card : Theme.text)
+                        .foregroundStyle(isSel ? Theme.ink : Theme.text)
                         .frame(width: 52)
                         .padding(.vertical, 10)
-                        .background(isSel ? Theme.text : Theme.card, in: RoundedRectangle(cornerRadius: 10))
+                        .background(isSel ? Color.white : Theme.card, in: RoundedRectangle(cornerRadius: 10))
                         .opacity(d.isLowConfidence && !isSel ? 0.55 : 1)
                     }
                     .buttonStyle(.plain)
@@ -167,16 +168,16 @@ struct DaySummaryCard: View {
         Card {
             HStack {
                 Text(LocalTime.format(day.day, "EEEE").uppercased())
-                    .font(.system(size: 12, weight: .heavy)).tracking(1).foregroundStyle(Theme.secondary)
+                    .font(.ui(12, .heavy)).tracking(1).foregroundStyle(Theme.secondary)
                 Spacer()
                 if day.confidence != "high" {
                     Text(day.isLowConfidence ? "LONG RANGE · TREND ONLY" : "MEDIUM CONFIDENCE")
-                        .font(.system(size: 10, weight: .heavy)).tracking(0.6)
+                        .font(.ui(10, .heavy)).tracking(0.6)
                         .foregroundStyle(day.isLowConfidence ? Theme.rating(2) : Theme.secondary)
                 }
             }
             Text("\(day.headline) \(day.advice)")
-                .font(.system(size: 22, weight: .heavy)).foregroundStyle(Theme.text)
+                .font(.ui(22, .heavy)).foregroundStyle(Theme.text)
             Text(day.summary).font(.system(size: 15)).foregroundStyle(Theme.secondary)
             HStack(spacing: 16) {
                 amPm("AM", day.starsAm, day.windAm)
@@ -184,9 +185,9 @@ struct DaySummaryCard: View {
                 Spacer()
                 if let w = day.bestWindow {
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text("BEST").font(.system(size: 10, weight: .heavy)).foregroundStyle(Theme.secondary)
+                        Text("BEST").font(.ui(10, .heavy)).foregroundStyle(Theme.secondary)
                         Text("\(LocalTime.shortHour(LocalTime.parse(w.start)))–\(LocalTime.shortHour(LocalTime.parse(w.end).addingTimeInterval(3600)))")
-                            .font(.system(size: 15, weight: .bold)).foregroundStyle(Theme.text)
+                            .font(.ui(15, .bold)).foregroundStyle(Theme.text)
                     }
                 }
             }
@@ -197,8 +198,8 @@ struct DaySummaryCard: View {
         HStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 2).fill(Theme.rating(stars)).frame(width: 4, height: 30)
             VStack(alignment: .leading, spacing: 1) {
-                Text(label).font(.system(size: 10, weight: .heavy)).foregroundStyle(Theme.secondary)
-                Text("\(wind.mph ?? 0) \(wind.dirLabel)").font(.system(size: 14, weight: .bold))
+                Text(label).font(.ui(10, .heavy)).foregroundStyle(Theme.secondary)
+                Text("\(wind.mph ?? 0) \(wind.dirLabel)").font(.ui(14, .bold))
                     .foregroundStyle(Theme.windSpeedText(wind.mph))
             }
         }
@@ -257,7 +258,7 @@ struct RatingLegend: View {
             ForEach(1...5, id: \.self) { s in
                 HStack(spacing: 4) {
                     Circle().fill(Theme.rating(s)).frame(width: 7, height: 7)
-                    Text(Theme.ratingName(s)).font(.system(size: 10, weight: .semibold)).foregroundStyle(Theme.secondary)
+                    Text(Theme.ratingName(s)).font(.ui(10, .semibold)).foregroundStyle(Theme.secondary)
                 }
             }
         }
@@ -273,12 +274,12 @@ struct SwellCard: View {
                     HStack(spacing: 12) {
                         DirectionArrow(from: t.dir, size: 18, color: i == 0 ? Theme.text : Theme.secondary)
                             .frame(width: 24)
-                        Text("\(t.heightFt.oneDecimal) ft").font(.system(size: 17, weight: .heavy)).frame(width: 64, alignment: .leading)
-                        Text("\(t.periodS.noDecimal)s").font(.system(size: 17, weight: .bold)).frame(width: 40, alignment: .leading)
+                        Text("\(t.heightFt.oneDecimal) ft").font(.ui(17, .heavy)).frame(width: 64, alignment: .leading)
+                        Text("\(t.periodS.noDecimal)s").font(.ui(17, .bold)).frame(width: 40, alignment: .leading)
                         Text("\(t.dirLabel) \(t.dir.noDecimal)°").font(.system(size: 15))
                         Spacer()
                         Text(t.kind == "wind" ? "wind swell" : (i == 0 ? "primary" : "secondary"))
-                            .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.secondary)
+                            .font(.ui(12, .semibold)).foregroundStyle(Theme.secondary)
                     }
                     .foregroundStyle(i == 0 ? Theme.text : Theme.secondary)
                 }
@@ -320,7 +321,7 @@ struct WindChartCard: View {
                 WindSpeedLegend().frame(maxWidth: 220)
                 HStack(spacing: 4) {
                     Circle().fill(Theme.secondary.opacity(0.7)).frame(width: 4, height: 4)
-                    Text("Gusts").font(.system(size: 10, weight: .semibold)).foregroundStyle(Theme.secondary)
+                    Text("Gusts").font(.ui(10, .semibold)).foregroundStyle(Theme.secondary)
                 }
             }
         }
@@ -351,7 +352,7 @@ struct TideChartCard: View {
                         .symbolSize(30)
                         .annotation(position: t.isHigh ? .top : .bottom, spacing: 4,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-                            Text("\(t.label) \(t.ft.oneDecimal)").font(.system(size: 10, weight: .bold))
+                            Text("\(t.label) \(t.ft.oneDecimal)").font(.ui(10, .bold))
                                 .foregroundStyle(Theme.text)
                         }
                 }
@@ -372,7 +373,7 @@ struct TideChartCard: View {
                 Spacer()
                 if let w = day.waterF { Label("\(w)°F", systemImage: "thermometer.medium") }
             }
-            .font(.system(size: 12, weight: .semibold))
+            .font(.ui(12, .semibold))
             .foregroundStyle(Theme.secondary)
         }
     }
@@ -445,6 +446,6 @@ struct WindTrio: View {
             }
         }
         .padding(.horizontal, 3).padding(.vertical, 2)
-        .background(onDark ? Color.white.opacity(0.9) : .clear, in: Capsule())
+        .background(onDark ? Theme.ink.opacity(0.85) : .clear, in: Capsule())
     }
 }
