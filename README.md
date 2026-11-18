@@ -22,6 +22,9 @@ python3 -m unittest discover -s tests -t .
 - Tides: NOAA CO-OPS 8721120 (Daytona Beach Shores, ocean side) for the beaches and 8721147 (Ponce Inlet South) for the inlet spots.
 - Buoys: NDBC 41070 (Ponce), 41113 (Canaveral nearshore), 41009 (Canaveral offshore). For the next 24 hours, 41070 corrects the model's wave height.
 
+### Kauai
+`engine/kauai.json` is a second region (Tunnels, Hanalei Bay, Anahola, PK's, Pakala) on Hawaii time. It publishes `forecast-kauai.json` and `summary-kauai.json`, and the app switches between regions from the header. Tides: NOAA 1611683 (Hanalei), 1611400 (Nawiliwili), 1611347 (Port Allen). Buoys: NDBC 51208 (Hanalei, also corrects Tunnels and Hanalei) and 51201 (Waimea, Oahu). Heights are wave faces, not the Hawaiian scale.
+
 ### Tuning
 Spots, beach direction, jetty shelter and best tide are in `engine/spots.json`. The math for surf height, wind and ratings is in `engine/surf.py`. All of these are starting guesses, meant to be tuned against real sessions.
 

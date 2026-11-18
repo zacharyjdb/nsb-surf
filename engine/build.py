@@ -1,9 +1,11 @@
 """Build the forecast files the app, widgets and frame read.
 
-    python3 -m engine.build            # writes public/forecast.json and public/summary.json
+    python3 -m engine.build            # writes public/forecast*.json and public/summary*.json
 
-forecast.json  everything: per spot hourly (16 days) + daily summaries, tides, buoys
-summary.json   small: per spot "now" + 16 day ratings, for widgets
+One pair of files per region config (engine/spots.json = Florida, engine/kauai.json = Kauai):
+forecast<suffix>.json  everything: per spot hourly (16 days) + daily summaries, tides, buoys
+summary<suffix>.json   small: per spot "now" + 16 day ratings, for widgets
+Florida keeps the bare names (suffix ""), so older app builds keep working.
 """
 from __future__ import annotations
 
@@ -20,8 +22,11 @@ OUT = ROOT / "public"
 SCHEMA_VERSION = 1
 
 
-def load_config() -> dict:
-    return json.loads((ROOT / "engine" / "spots.json").read_text())
+REGION_FILES = ["spots.json", "kauai.json"]
+
+
+def load_config(name: str = "spots.json") -> dict:
+    return json.loads((ROOT / "engine" / name).read_text())
 
 
 def confidence(day_index: int) -> str:
@@ -204,11 +209,25 @@ def build_spot(spot: dict, wave: dict, wx: dict, hilo: list[dict], shelf: float,
 
 
 def main() -> int:
-    cfg = load_config()
+    """Builds every region. One region's sources being down doesn't stop the others publishing."""
+    failed = []
+    for name in REGION_FILES:
+        try:
+            build_region(load_config(name))
+        except Exception as e:  # noqa: BLE001
+            print(f"!! {name}: {e}", file=sys.stderr)
+            failed.append(name)
+    return 1 if len(failed) == len(REGION_FILES) else 0
+
+
+def build_region(cfg: dict) -> None:
     tz = cfg["timezone"]
     now_local = datetime.now(ZoneInfo(tz))
-    spots = cfg["spots"]
-    shelf = cfg["calibration"]["shelf_factor"]
+    cal = cfg["calibration"]
+    shelf = cal["shelf_factor"]
+    # Region-wide exposure tuning rides along on each spot (a spot can still override it).
+    spots = [{**{k: cal[k] for k in ("exposure_power", "exposure_floor") if k in cal}, **s} for s in cfg["spots"]]
+    suffix = cfg.get("output_suffix", "")
 
     waves = sources.marine(spots, tz)
     wx = sources.weather(spots, tz)
@@ -232,12 +251,13 @@ def main() -> int:
         o["buoy_nudge"] = w["nudge"]
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     meta = {"schema": SCHEMA_VERSION, "generated_utc": generated, "timezone": tz,
+            "region": cfg.get("region", ""), "region_name": cfg.get("region_name", ""),
             "sources": ["Open-Meteo Marine (ECMWF WAM, NOAA GFS-Wave)", "Open-Meteo Forecast",
                         "NOAA CO-OPS tide predictions", "NOAA NDBC buoys"]}
 
     OUT.mkdir(exist_ok=True)
     forecast = {**meta, "tide_stations": cfg["tide_stations"], "buoys": buoys, "spots": out_spots}
-    (OUT / "forecast.json").write_text(json.dumps(forecast, separators=(",", ":")))
+    (OUT / f"forecast{suffix}.json").write_text(json.dumps(forecast, separators=(",", ":")))
 
     summary = {**meta, "spots": [{
         "id": s["id"], "name": s["name"],
@@ -245,7 +265,7 @@ def main() -> int:
         "next_tide": s["next_tide"],
         "days": [{k: d[k] for k in ("date", "surf_label", "stars", "confidence", "headline")} for d in s["days"]],
     } for s in out_spots]}
-    (OUT / "summary.json").write_text(json.dumps(summary, separators=(",", ":")))
+    (OUT / f"summary{suffix}.json").write_text(json.dumps(summary, separators=(",", ":")))
 
     for s in out_spots:
         d = s["days"][0]
@@ -253,8 +273,8 @@ def main() -> int:
               f'today: {d["headline"]} {d["advice"]}  |  ' +
               " ".join(f'{x["date"][5:]}:{x["surf_label"]}/{x["stars"]}' for x in s["days"][1:8]))
     print(f"buoys: " + ", ".join(f'{b["id"]} {b["wave_ft"]}ft@{b["dominant_period_s"]}s' for b in buoys))
-    print(f'wrote {OUT / "forecast.json"} ({(OUT / "forecast.json").stat().st_size // 1024} KB), summary.json')
-    return 0
+    out = OUT / f"forecast{suffix}.json"
+    print(f'wrote {out} ({out.stat().st_size // 1024} KB), summary{suffix}.json')
 
 
 if __name__ == "__main__":

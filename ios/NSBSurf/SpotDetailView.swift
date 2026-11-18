@@ -31,7 +31,7 @@ struct SpotDetailView: View {
                     if let f = store.forecast, !f.buoys.isEmpty {
                         Card(title: "Live buoys") { BuoyList(buoys: f.buoys).padding(.horizontal, -16).padding(.vertical, -12) }
                     }
-                    Text("Wave models: ECMWF to ~10 days, NOAA GFS-Wave after. Next 24 h corrected by the Ponce buoy.")
+                    Text("Wave models: ECMWF to ~10 days, NOAA GFS-Wave after. Next 24 h corrected by the nearest buoy when it's reporting.")
                         .font(.footnote).foregroundStyle(Theme.secondary)
                 }
                 .padding(.horizontal, 16)

@@ -1,4 +1,7 @@
 {
+  "region": "florida",
+  "region_name": "Florida",
+  "output_suffix": "",
   "timezone": "America/New_York",
   "calibration": {
     "_note": "Shelf factor scales the deep-water breaker estimate down to what the beach actually sees. Florida's wide, shallow shelf eats a lot of energy. Tune this against real sessions.",

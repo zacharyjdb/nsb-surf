@@ -29,6 +29,11 @@ class Geometry(unittest.TestCase):
         self.assertLess(surf.exposure(SPOT, 0), surf.exposure(SPOT, 45))
         self.assertLess(surf.exposure(JETTY, 0), surf.exposure(SPOT, 0))  # jetty shadow
 
+    def test_reef_coast_exposure_is_sharper(self):
+        reef = {**SPOT, "exposure_power": 1.0, "exposure_floor": 0.1}
+        self.assertLess(surf.exposure(reef, 10), surf.exposure(SPOT, 10))  # oblique swell wraps less
+        self.assertAlmostEqual(surf.exposure(reef, 70), 1.0)
+
 
 class Height(unittest.TestCase):
     def test_bigger_and_longer_is_bigger(self):

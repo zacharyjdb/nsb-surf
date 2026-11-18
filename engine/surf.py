@@ -37,12 +37,13 @@ def in_arc(deg: float, start: float, end: float) -> bool:
 def exposure(spot: dict, swell_from: float) -> float:
     """How much of a swell from this direction reaches the spot (0–1)."""
     theta = angle_diff(swell_from, spot["facing"])
-    # A gentle falloff: over Florida's wide shelf, refraction swings oblique swell toward the beach,
-    # so a N swell still reaches an ENE-facing beach far better than deep-water geometry suggests.
+    # Default is a gentle falloff: over Florida's wide shelf, refraction swings oblique swell toward the
+    # beach, so a N swell still reaches an ENE-facing beach far better than deep-water geometry suggests.
+    # Steep reef coasts (Hawaii) set a sharper exposure_power in their region calibration.
     if theta >= 100:
         return 0.0  # travelling away from the beach (e.g. offshore-wind chop)
-    f = math.cos(math.radians(theta)) ** 0.3 if theta < 90 else 0.0
-    f = max(f, 0.2)  # refraction wraps a little of nearly-parallel swell in
+    f = math.cos(math.radians(theta)) ** spot.get("exposure_power", 0.3) if theta < 90 else 0.0
+    f = max(f, spot.get("exposure_floor", 0.2))  # refraction wraps a little of nearly-parallel swell in
     for s in spot.get("shelter", []):
         if in_arc(swell_from, s["from"], s["to"]):
             f *= s["factor"]

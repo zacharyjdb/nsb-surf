@@ -1,0 +1,81 @@
+{
+  "region": "kauai",
+  "region_name": "Kauai",
+  "output_suffix": "-kauai",
+  "timezone": "Pacific/Honolulu",
+  "calibration": {
+    "_note": "Hawaii's reefs sit right off deep water, so far less energy is lost on the way in than in Florida (shelf 0.9 vs 0.6), and there's little refraction to bend swell around the island (sharper exposure falloff). Heights are wave faces, not the Hawaiian scale (about half). Starting guesses.",
+    "shelf_factor": 0.9,
+    "exposure_power": 1.0,
+    "exposure_floor": 0.1
+  },
+  "tide_stations": {
+    "1611683": "Hanalei Bay",
+    "1611400": "Nawiliwili",
+    "1611347": "Port Allen, Hanapepe Bay"
+  },
+  "nudge_buoy": "",
+  "buoys": [
+    {"id": "51208", "name": "Hanalei, Kauai"},
+    {"id": "51201", "name": "Waimea Bay, Oahu"}
+  ],
+  "spots": [
+    {
+      "id": "tunnels",
+      "name": "Tunnels",
+      "subtitle": "North Shore · Makua Beach",
+      "lat": 22.2236, "lon": -159.5563,
+      "facing": 0,
+      "tide_station": "1611683",
+      "best_tide": "mid",
+      "nudge_buoy": "51208",
+      "shelter": [],
+      "notes": "Outer reef. Winter NW to N swell. Starting guess."
+    },
+    {
+      "id": "hanalei",
+      "name": "Hanalei Bay",
+      "subtitle": "North Shore · the Bowl",
+      "lat": 22.2185, "lon": -159.4990,
+      "facing": 320,
+      "tide_station": "1611683",
+      "best_tide": "mid",
+      "nudge_buoy": "51208",
+      "shelter": [],
+      "notes": "Point/reef in the bay. NW to N swell; ENE trades run cross-offshore. Starting guess."
+    },
+    {
+      "id": "anahola",
+      "name": "Anahola",
+      "subtitle": "East Side",
+      "lat": 22.1490, "lon": -159.3030,
+      "facing": 70,
+      "tide_station": "1611400",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Reef pass. Trade swell and NE wrap; trades blow onshore. Starting guess."
+    },
+    {
+      "id": "pks",
+      "name": "PK's",
+      "subtitle": "South Shore · Poipu",
+      "lat": 21.8745, "lon": -159.4561,
+      "facing": 175,
+      "tide_station": "1611400",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Reef left/right off Prince Kuhio. Summer S swell; trades side-offshore. Starting guess."
+    },
+    {
+      "id": "pakala",
+      "name": "Pakala",
+      "subtitle": "West Side · Infinities",
+      "lat": 21.9330, "lon": -159.6960,
+      "facing": 210,
+      "tide_station": "1611347",
+      "best_tide": "mid",
+      "shelter": [],
+      "notes": "Long left. S to SW swell; ENE trades straight offshore. Starting guess."
+    }
+  ]
+}

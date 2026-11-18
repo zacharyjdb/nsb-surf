@@ -6,6 +6,8 @@ struct Forecast: Codable {
     let schema: Int
     let generatedUtc: String
     let timezone: String
+    let region: String?
+    let regionName: String?
     let sources: [String]
     let buoys: [Buoy]
     let spots: [Spot]
@@ -128,8 +130,11 @@ struct Day: Codable, Identifiable, Hashable {
 }
 
 enum LocalTime {
-    /// All forecast times are local wall-clock strings for the spot's timezone ("2026-11-13T14:00").
-    static let zone = TimeZone(identifier: "America/New_York")!
+    /// All forecast times are local wall-clock strings for the region's timezone ("2026-11-13T14:00").
+    /// The app shows one region at a time; ForecastStore sets this when the region changes.
+    nonisolated(unsafe) static var zone = TimeZone(identifier: "America/New_York")! {
+        didSet { parser.timeZone = zone }
+    }
 
     private static let parser: DateFormatter = {
         let f = DateFormatter()

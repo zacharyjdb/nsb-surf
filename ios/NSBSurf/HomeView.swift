@@ -24,7 +24,7 @@ struct HomeView: View {
                             .buttonStyle(.plain)
                         }
                         RightNow(spots: f.spots)
-                        WeekGlance(days: Outlook.bestPerDay(f), target: target?.day.date)
+                        WeekGlance(days: Outlook.bestPerDay(f), target: target?.day.date, region: store.region)
                         BestBets(bets: Outlook.bestBets(f, excluding: target))
                         if let h = Outlook.horizon(f, beating: target) {
                             NavigationLink(value: SpotLink(spotID: h.spot.id, date: h.day.date)) {
@@ -48,9 +48,13 @@ struct HomeView: View {
 
     private func header(target: SpotDay?) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(LocalTime.format(Date(), "EEEE, MMM d").uppercased())
-                .font(.ui(12, .heavy)).tracking(1)
-                .foregroundStyle(Theme.secondary)
+            HStack {
+                Text(LocalTime.format(Date(), "EEEE, MMM d").uppercased())
+                    .font(.ui(12, .heavy)).tracking(1)
+                    .foregroundStyle(Theme.secondary)
+                Spacer()
+                RegionMenu()
+            }
             Text(Outlook.greeting())
                 .font(.ui(34, .heavy))
                 .foregroundStyle(Theme.text)
@@ -173,7 +177,8 @@ struct TargetCard: View {
 struct WeekGlance: View {
     let days: [SpotDay]
     let target: String?
-    @State private var past: [String: WeekHistory.Entry] = WeekHistory.load()
+    let region: Region
+    @State private var past: [String: WeekHistory.Entry] = [:]
 
     var body: some View {
         let byDate = Dictionary(days.map { ($0.day.date, $0) }, uniquingKeysWith: { a, _ in a })
@@ -197,8 +202,8 @@ struct WeekGlance: View {
             .frame(height: 120, alignment: .bottom)
         }
         .task(id: days.map(\.id)) {
-            WeekHistory.record(days)
-            past = WeekHistory.load()
+            WeekHistory.record(days, region: region)
+            past = WeekHistory.load(region)
         }
     }
 
@@ -386,21 +391,22 @@ enum WeekHistory {
         let score: Double
     }
 
-    private static let key = "weekHistory.v1"
+    /// Florida keeps the original key, so history from earlier builds carries over.
+    private static func key(_ r: Region) -> String { r == .florida ? "weekHistory.v1" : "weekHistory.\(r.rawValue).v1" }
 
-    static func load() -> [String: Entry] {
-        guard let data = UserDefaults.standard.data(forKey: key),
+    static func load(_ region: Region) -> [String: Entry] {
+        guard let data = UserDefaults.standard.data(forKey: key(region)),
               let all = try? JSONDecoder().decode([String: Entry].self, from: data) else { return [:] }
         return all
     }
 
     /// Stores the latest forecast for each upcoming day (newer forecasts overwrite older ones) and
     /// drops anything more than two weeks old.
-    static func record(_ days: [SpotDay]) {
-        var all = load()
+    static func record(_ days: [SpotDay], region: Region) {
+        var all = load(region)
         for d in days { all[d.day.date] = Entry(surfLabel: d.day.surfLabel, score: d.score) }
         let cutoff = LocalTime.format(Date().addingTimeInterval(-14 * 86_400), "yyyy-MM-dd")
         all = all.filter { $0.key >= cutoff }
-        if let data = try? JSONEncoder().encode(all) { UserDefaults.standard.set(data, forKey: key) }
+        if let data = try? JSONEncoder().encode(all) { UserDefaults.standard.set(data, forKey: key(region)) }
     }
 }

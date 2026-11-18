@@ -13,6 +13,7 @@
 		44B84387D71F8826B86D1ADB /* ForecastDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */; };
 		52F50C8365580B4FC1F3F7B6 /* Outlook.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B14FFC96C9AE82B44461F9 /* Outlook.swift */; };
 		535C7D1D540078104EB0D6EF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC5B25037E6164A8294C2A1 /* Models.swift */; };
+		65D30C5C8C3782CA0D633226 /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0C2F8FB1C929BF6E5E2DBE /* Region.swift */; };
 		6A185CFDC93B4F458DC6F4BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 670B1CA41A0CF9564221B5A2 /* Assets.xcassets */; };
 		9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A441D420483A20DD4C9A7EF /* SpotDetailView.swift */; };
 		9E89B4CBF867AD6A5AF0E868 /* SampleForecast.json in Resources */ = {isa = PBXBuildFile; fileRef = 557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */; };
@@ -38,6 +39,7 @@
 		1191E014ACF295004020F224 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		237EF5850DC94CCB3474FB6B /* ForecastStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastStore.swift; sourceTree = "<group>"; };
 		39FBD84BBE3EEB6A28C523CD /* ForecastDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDecodingTests.swift; sourceTree = "<group>"; };
+		3E0C2F8FB1C929BF6E5E2DBE /* Region.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Region.swift; sourceTree = "<group>"; };
 		557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SampleForecast.json; sourceTree = "<group>"; };
 		5DC5B25037E6164A8294C2A1 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		670B1CA41A0CF9564221B5A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				237EF5850DC94CCB3474FB6B /* ForecastStore.swift */,
 				5DC5B25037E6164A8294C2A1 /* Models.swift */,
 				A4B14FFC96C9AE82B44461F9 /* Outlook.swift */,
+				3E0C2F8FB1C929BF6E5E2DBE /* Region.swift */,
 				557BD7F2A2D07C59DD05E1C2 /* SampleForecast.json */,
 			);
 			path = Shared;
@@ -201,6 +204,7 @@
 				535C7D1D540078104EB0D6EF /* Models.swift in Sources */,
 				C32FD667012501670BC18D89 /* NSBSurfApp.swift in Sources */,
 				52F50C8365580B4FC1F3F7B6 /* Outlook.swift in Sources */,
+				65D30C5C8C3782CA0D633226 /* Region.swift in Sources */,
 				9344B0A0233462D5A979D3A3 /* SpotDetailView.swift in Sources */,
 				367D379DE9671E705E59763A /* SpotListView.swift in Sources */,
 				0BA1BD7C1A62BBC0A3685FE9 /* Theme.swift in Sources */,

@@ -39,10 +39,14 @@ struct SpotListView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(LocalTime.format(Date(), "EEEE, MMM d").uppercased())
-                .font(.ui(12, .heavy)).tracking(1)
-                .foregroundStyle(Theme.secondary)
-            Text("Surf")
+            HStack {
+                Text(LocalTime.format(Date(), "EEEE, MMM d").uppercased())
+                    .font(.ui(12, .heavy)).tracking(1)
+                    .foregroundStyle(Theme.secondary)
+                Spacer()
+                RegionMenu()
+            }
+            Text(store.region.name)
                 .font(.ui(34, .heavy))
                 .foregroundStyle(Theme.text)
         }
@@ -171,5 +175,29 @@ struct BuoyList: View {
         .padding(.horizontal, 16)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: 20))
         .shadow(color: Theme.shadow, radius: 8, y: 2)
+    }
+}
+
+/// The region switch in the screen headers: a small capsule that opens a menu of regions.
+struct RegionMenu: View {
+    @Environment(ForecastStore.self) private var store
+
+    var body: some View {
+        @Bindable var store = store
+        Menu {
+            Picker("Region", selection: $store.region) {
+                ForEach(Region.allCases) { Text($0.name).tag($0) }
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: "mappin.and.ellipse").font(.system(size: 11, weight: .bold))
+                Text(store.region.name.uppercased()).font(.ui(12, .heavy)).tracking(1)
+                Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold))
+            }
+            .foregroundStyle(Theme.text)
+            .padding(.horizontal, 10).padding(.vertical, 6)
+            .background(Theme.cardRaised, in: Capsule())
+        }
+        .accessibilityLabel("Region, \(store.region.name)")
     }
 }

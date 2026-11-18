@@ -33,6 +33,6 @@ struct RootView: View {
             Tab("Home", image: "TabWave") { HomeView() }
             Tab("Spots", systemImage: "water.waves") { SpotListView() }
         }
-        .task { await store.refresh() }
+        .task(id: store.region) { await store.refresh() }
     }
 }
